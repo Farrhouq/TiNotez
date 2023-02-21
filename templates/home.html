@@ -10,6 +10,7 @@
         body {
             font-family: sans-serif;
             padding: 0;
+            /* overflow-y: hidden; */
         }
 
 
@@ -20,7 +21,7 @@
             position: fixed;
             top: 0;
             left: 0;
-            height: fit-content;   
+            height: 50px;   
             display: flex;   
             align-items: center;
             justify-content: center;
@@ -44,8 +45,9 @@
         textarea {
             margin-top: 5rem;
             font-size: 2em;
-            width: 100%;
-            height: 100vh;
+            width: 97%;
+            height: 76.8vh;
+            padding: 1rem;
         }
 
     </style>
@@ -53,11 +55,13 @@
 </head>
 <body>
     <nav>
+        <h1 style="color: black;cursor: pointer;" id="filename">Untitled.txt</h1>
+        <input id="filename-input" onkeypress="handle_enter(event)" style="z-index: 4;font-size: 20px;text-align: center;" type="hidden">
         <a href="" class="nav-item">
             New
         </a>
 
-        <a href="{% url 'save' %}" class="nav-item">
+        <a href="" id="save" onclick="submit_form(event)" class="nav-item">
             Save
         </a>
 
@@ -65,13 +69,58 @@
             Open
         </a>
     </nav>
-
-    <form action="{% url 'save' %}" method="POST">
+    <form id="my-form" action="{% url 'save' %}" method="POST">
         {% csrf_token %}
-        <h1 id="filename">Untitled.txt</h1>
-        <input type="hidden">
-        <textarea name="notes"></textarea>
-<input type="submit">
+        <textarea name="notes" autofocus></textarea>
+        <input id="hidden-filename" name="hidden-filename" type="hidden">
+    <!-- <input type="submit"> -->
     </form>
 </body>
+
+<script>
+    const hidden_filename = document.querySelector("#hidden-filename");
+    const filename = document.querySelector('#filename');
+    const filename_input = document.querySelector('#filename-input');
+    hidden_filename.value = filename.innerText;
+
+
+    filename.addEventListener('dblclick', function (e) {
+        filename.style.display = 'none';
+        filename_input.setAttribute('type', 'text');
+        filename_input.value = filename.innerText;
+        hidden_filename = filename.innerText;
+        filename_input.focus()
+    })
+    
+    window.addEventListener('click', function (){
+        if (filename.style.display == 'none')
+        {
+        filename.style.display = 'block';
+        filename.innerText = filename_input.value
+        filename_input.setAttribute('type', 'hidden');
+        document.querySelector('textarea').focus()
+        }
+    })
+
+    filename_input.addEventListener('click', function (e) {
+        e.stopPropagation()
+    })
+
+    function handle_enter(event){
+        if(event.keyCode == 13){
+            if(filename.style.display == 'none')
+        {
+        filename.style.display = 'block';
+        filename.innerText = filename_input.value
+        filename_input.setAttribute('type', 'hidden');
+        }
+        }
+    }
+
+    function submit_form(e) {
+        e.preventDefault();
+        // alert('sdfs')
+        document.querySelector('#my-form').submit();
+    }
+</script>
 </html>
