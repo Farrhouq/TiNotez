@@ -50,12 +50,85 @@
             padding: 1rem;
         }
 
+        .btn-buy {
+	border: 1px solid #dedede;
+  border-bottom: 1px solid #b5b5b5;
+	border-right: none;
+	border-radius: 3px 0 0 3px;
+	font-size: 12px;
+	font-weight: bold;
+	padding: 6px 14px;
+	margin-top: 15px;
+	background: linear-gradient(#fff, #EFEFEF);
+}
+.btn-buy:hover {
+	background: #EFEFEF;
+}
+/* .btn-buy-list {
+	border: 1px solid #dedede;
+  border-bottom: 1px solid #b5b5b5;
+	border-radius: 0 3px 3px 0;
+	font-size: 12px;
+	font-weight: bold;
+	padding: 6px 10px;
+	background: linear-gradient(#fff, #EFEFEF);
+	margin-left: -10px;
+	position: relative;
+} */
+.btn-buy-list:hover {
+	background: #EFEFEF;
+}
+.btn-buy:active,
+.btn-buy:focus,
+.btn-buy-list:active,
+.btn-buy-list:focus {
+	outline: none;
+	background: #ddd;
+}
+.btn-arrow {
+	width: 0;
+	height: 0;
+	border-top: 5px solid black;
+	border-right: 5px solid transparent;
+	border-bottom: 5px solid transparent;
+	border-left: 5px solid transparent;
+	position: relative;
+  top: 10px;
+}
+.dropdown-menu {
+  position: absolute;
+  z-index: 1000;
+	display: none;
+  min-width: 160px;
+  padding: 5px 0;
+  margin: -1px 0 0 0;
+  list-style: none;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  background-clip: padding-box;
+}
+.dropdown-menu a {
+	text-decoration: none;
+}
+.dropdown-menu a li {
+	font-size: 12px;
+	font-family: arial,sans-serif;
+	color: #222;
+	padding: 5px 15px;
+}
+.dropdown-menu a li:hover {
+	background-color: #bae2fc;
+}
+
+
     </style>
 
 </head>
 <body>
     <nav>
-        <h1 style="color: black;cursor: pointer;" id="filename">Untitled.txt</h1>
+        <h1 style="color: black;cursor: pointer;" id="filename">{% if not open_file %}Untitled.txt{% else %}{{open_file}}{% endif %}</h1>
         <input id="filename-input" onkeypress="handle_enter(event)" style="z-index: 4;font-size: 20px;text-align: center;" type="hidden">
         <a href="" class="nav-item">
             New
@@ -65,13 +138,28 @@
             Save
         </a>
 
-        <a href="" class="nav-item">
+        <!-- <a href="" class="nav-item">
             Open
-        </a>
+        </a> -->
+        <div class="product-price-box">
+            <div class="buy">
+              <!-- <button class="btn-buy">Buy</button> -->
+              <!-- Button for opening dropdown -->
+              <button class="nav-item btn-buy-list" id="dropBtn1">Open</button>
+              <!-- Dropdown menu itself - hidden by default -->
+              <ul class="dropdown-menu">
+                {% for filename in file_list %}
+                <a style="font-size: 1.2em;" href="{% url 'home' %}?file={{filename}}"><li>{{filename}}</li></a>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          
+
     </nav>
     <form id="my-form" action="{% url 'save' %}" method="POST">
         {% csrf_token %}
-        <textarea name="notes" autofocus></textarea>
+        <textarea name="notes" autofocus>{%for note in notes %}{{note}}{% endfor %}</textarea>
         <input id="hidden-filename" name="hidden-filename" type="hidden">
     <!-- <input type="submit"> -->
     </form>
@@ -81,15 +169,16 @@
     const hidden_filename = document.querySelector("#hidden-filename");
     const filename = document.querySelector('#filename');
     const filename_input = document.querySelector('#filename-input');
-    hidden_filename.value = filename.innerText;
+    hidden_filename.value = filename.innerText
+    
 
 
     filename.addEventListener('dblclick', function (e) {
         filename.style.display = 'none';
         filename_input.setAttribute('type', 'text');
         filename_input.value = filename.innerText;
-        hidden_filename = filename.innerText;
-        filename_input.focus()
+        // hidden_filename.value = filename.innerText;
+        filename_input.focus();
     })
     
     window.addEventListener('click', function (){
@@ -98,7 +187,8 @@
         filename.style.display = 'block';
         filename.innerText = filename_input.value
         filename_input.setAttribute('type', 'hidden');
-        document.querySelector('textarea').focus()
+        document.querySelector('textarea').focus();
+        hidden_filename.value = filename.innerText
         }
     })
 
@@ -113,6 +203,7 @@
         filename.style.display = 'block';
         filename.innerText = filename_input.value
         filename_input.setAttribute('type', 'hidden');
+        hidden_filename.value = filename.innerText
         }
         }
     }
@@ -122,5 +213,66 @@
         // alert('sdfs')
         document.querySelector('#my-form').submit();
     }
+
+    //toggle dropdown menu open/close
+var toClose = false
+
+function toggle(e) {
+  e.stopPropagation();
+  var btn=this;
+  var menu = btn.nextSibling;
+  
+  while(menu && menu.nodeType != 1) {
+     menu = menu.nextSibling
+  }
+  if(!menu) return;
+  if (menu.style.display !== 'block') {
+    menu.style.display = 'block';
+    if(toClose) toClose.style.display="none";
+    toClose  = menu;
+  }  else {
+    menu.style.display = 'none';
+    toClose=false;
+  }
+
+};
+function closeAll() {
+    toClose.style.display='none';
+};
+
+window.addEventListener("DOMContentLoaded",function(){
+  document.querySelectorAll(".btn-buy-list").forEach(function(btn){
+     btn.addEventListener("click",toggle,true);
+  });
+});
+
+window.onclick=function(event){
+  if (toClose){
+    closeAll.call(event.target);
+  }
+};
+
+/* Old code
+
+// select Button - now by ID - but I need unknown number of buttons - from REST API - and the code working for all of them
+var btn = document.getElementById("dropBtn1");
+
+// select Dropdown menu - next to the button - to be sure it will open the right menu no matter which button will be pressed
+var menu = btn.nextSibling;
+while(menu && menu.nodeType != 1) {
+    menu = menu.nextSibling
+}
+
+//toggle dropdown menu open/close
+btn.addEventListener("click", function() {
+  if (menu.style.display == 'none') {
+    menu.style.display = 'block';
+  }
+  else {
+    menu.style.display = 'none';
+  }
+});
+*/
+
 </script>
 </html>
