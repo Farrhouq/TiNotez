@@ -130,7 +130,7 @@
     <nav>
         <h1 style="color: black;cursor: pointer;" id="filename">{% if not open_file %}Untitled.txt{% else %}{{open_file}}{% endif %}</h1>
         <input id="filename-input" onkeypress="handle_enter(event)" style="z-index: 4;font-size: 20px;text-align: center;" type="hidden">
-        <a href="" class="nav-item">
+        <a href="/" class="nav-item">
             New
         </a>
 
@@ -169,7 +169,9 @@
     const hidden_filename = document.querySelector("#hidden-filename");
     const filename = document.querySelector('#filename');
     const filename_input = document.querySelector('#filename-input');
-    hidden_filename.value = filename.innerText
+    if (window.location.href != 'http://127.0.0.1:8000/'){
+      hidden_filename.value = filename.innerText
+    }
     
 
 
@@ -210,15 +212,19 @@
 
     function submit_form(e) {
         e.preventDefault();
-        // alert('sdfs')
-        document.querySelector('#my-form').submit();
+        if (window.location.href == 'http://127.0.0.1:8000/'){
+          // alert(`${hidden_filename.value}`)
+          if (hidden_filename.value == ''){alert('name your file')}else{document.querySelector('#my-form').submit();}
+        } else {
+          document.querySelector('#my-form').submit();
+        }
     }
 
     //toggle dropdown menu open/close
 var toClose = false
 
 function toggle(e) {
-  e.stopPropagation();
+ e.stopPropagation();
   var btn=this;
   var menu = btn.nextSibling;
   
@@ -228,16 +234,16 @@ function toggle(e) {
   if(!menu) return;
   if (menu.style.display !== 'block') {
     menu.style.display = 'block';
-    if(toClose) toClose.style.display="none";
-    toClose  = menu;
+  if(toClose) toClose.style.display="none";
+  toClose = menu;
   }  else {
     menu.style.display = 'none';
-    toClose=false;
+  toClose=false;
   }
 
 };
 function closeAll() {
-    toClose.style.display='none';
+  toClose.style.display='none';
 };
 
 window.addEventListener("DOMContentLoaded",function(){
@@ -247,32 +253,11 @@ window.addEventListener("DOMContentLoaded",function(){
 });
 
 window.onclick=function(event){
-  if (toClose){
+ if (toClose){
     closeAll.call(event.target);
   }
 };
 
-/* Old code
-
-// select Button - now by ID - but I need unknown number of buttons - from REST API - and the code working for all of them
-var btn = document.getElementById("dropBtn1");
-
-// select Dropdown menu - next to the button - to be sure it will open the right menu no matter which button will be pressed
-var menu = btn.nextSibling;
-while(menu && menu.nodeType != 1) {
-    menu = menu.nextSibling
-}
-
-//toggle dropdown menu open/close
-btn.addEventListener("click", function() {
-  if (menu.style.display == 'none') {
-    menu.style.display = 'block';
-  }
-  else {
-    menu.style.display = 'none';
-  }
-});
-*/
 
 </script>
 </html>

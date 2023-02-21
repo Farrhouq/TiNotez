@@ -19,7 +19,6 @@ def home(request):
             notes = file_opened.readlines()
 
             context['notes'] = notes
-            print(notes)
             
     context['file_list'] = file_list
     context.update({'open_file':open_file})
@@ -28,15 +27,11 @@ def home(request):
 
 def save(request):
     if request.method == 'POST':
-        print(request.POST.get('notes').count('\n'))
         notes = request.POST.get('notes')
-        filename = request.POST.get('hidden-filename')
-        print(filename)
-        print(request.POST.get('open'))
 
+        filename = request.POST.get('hidden-filename')
         with open(f'C:/Users/Farouq/Desktop/{filename}', 'w') as file:
             for note in notes:
                 file.write(note.rstrip('\n'))
-                # file.write('a')
-            # print(n)
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    return redirect(f'/?file={filename}')
+    # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
