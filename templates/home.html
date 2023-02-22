@@ -1,263 +1,266 @@
+<!-- @format -->
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Notes</title>
 
     <style>
-        body {
-            font-family: sans-serif;
-            padding: 0;
-            /* overflow-y: hidden; */
-        }
+      body {
+        font-family: sans-serif;
+        padding: 0;
+        /* overflow-y: hidden; */
+      }
 
+      nav {
+        background-color: lightgreen;
+        width: 100vw;
+        padding: 10px 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 40px;
+      }
 
-        nav {
-            background-color: lightgreen;
-            width: 100vw;
-            padding: 10px 0;
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 50px;   
-            display: flex;   
-            align-items: center;
-            justify-content: center;
-            gap: 40px;  
-        }
+      .nav-item {
+        background-color: lightblue;
+        width: fit-content;
+        padding: 10px;
+        font-size: 1.1em;
+        border-radius: 6px;
+        border: 2px solid blue;
+        text-decoration: none;
+      }
 
-        .nav-item {
-            background-color: lightblue;
-            width: fit-content;
-            padding: 10px;
-            font-size: 1.1em;
-            border-radius: 6px;
-            border: 2px solid blue;
-            text-decoration: none
-        }
+      .nav-item:visited {
+        color: black;
+      }
 
-        .nav-item:visited {
-            color: black
-        }
+      textarea {
+        margin-top: 5rem;
+        font-size: 2em;
+        width: 97%;
+        height: 76.8vh;
+        padding: 1rem;
+      }
 
-        textarea {
-            margin-top: 5rem;
-            font-size: 2em;
-            width: 97%;
-            height: 76.8vh;
-            padding: 1rem;
-        }
+      .btn-buy {
+        border: 1px solid #dedede;
+        border-bottom: 1px solid #b5b5b5;
+        border-right: none;
+        border-radius: 3px 0 0 3px;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 6px 14px;
+        margin-top: 15px;
+        background: linear-gradient(#fff, #efefef);
+      }
+      .btn-buy:hover {
+        background: #efefef;
+      }
 
-        .btn-buy {
-	border: 1px solid #dedede;
-  border-bottom: 1px solid #b5b5b5;
-	border-right: none;
-	border-radius: 3px 0 0 3px;
-	font-size: 12px;
-	font-weight: bold;
-	padding: 6px 14px;
-	margin-top: 15px;
-	background: linear-gradient(#fff, #EFEFEF);
-}
-.btn-buy:hover {
-	background: #EFEFEF;
-}
-/* .btn-buy-list {
-	border: 1px solid #dedede;
-  border-bottom: 1px solid #b5b5b5;
-	border-radius: 0 3px 3px 0;
-	font-size: 12px;
-	font-weight: bold;
-	padding: 6px 10px;
-	background: linear-gradient(#fff, #EFEFEF);
-	margin-left: -10px;
-	position: relative;
-} */
-.btn-buy-list:hover {
-	background: #EFEFEF;
-}
-.btn-buy:active,
-.btn-buy:focus,
-.btn-buy-list:active,
-.btn-buy-list:focus {
-	outline: none;
-	background: #ddd;
-}
-.btn-arrow {
-	width: 0;
-	height: 0;
-	border-top: 5px solid black;
-	border-right: 5px solid transparent;
-	border-bottom: 5px solid transparent;
-	border-left: 5px solid transparent;
-	position: relative;
-  top: 10px;
-}
-.dropdown-menu {
-  position: absolute;
-  z-index: 1000;
-	display: none;
-  min-width: 160px;
-  padding: 5px 0;
-  margin: -1px 0 0 0;
-  list-style: none;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-  background-clip: padding-box;
-}
-.dropdown-menu a {
-	text-decoration: none;
-}
-.dropdown-menu a li {
-	font-size: 12px;
-	font-family: arial,sans-serif;
-	color: #222;
-	padding: 5px 15px;
-}
-.dropdown-menu a li:hover {
-	background-color: #bae2fc;
-}
-
-
+      .btn-buy-list:hover {
+        background: #efefef;
+      }
+      .btn-buy:active,
+      .btn-buy:focus,
+      .btn-buy-list:active,
+      .btn-buy-list:focus {
+        outline: none;
+        background: #ddd;
+      }
+      .btn-arrow {
+        width: 0;
+        height: 0;
+        border-top: 5px solid black;
+        border-right: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        border-left: 5px solid transparent;
+        position: relative;
+        top: 10px;
+      }
+      .dropdown-menu {
+        position: absolute;
+        z-index: 1000;
+        display: none;
+        min-width: 160px;
+        padding: 5px 0;
+        margin: -1px 0 0 0;
+        list-style: none;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+        background-clip: padding-box;
+      }
+      .dropdown-menu a {
+        text-decoration: none;
+      }
+      .dropdown-menu a li {
+        font-size: 12px;
+        font-family: arial, sans-serif;
+        color: #222;
+        padding: 5px 15px;
+      }
+      .dropdown-menu a li:hover {
+        background-color: #bae2fc;
+      }
     </style>
-
-</head>
-<body>
+  </head>
+  <body>
     <nav>
-        <h1 style="color: black;cursor: pointer;" id="filename">{% if not open_file %}Untitled.txt{% else %}{{open_file}}{% endif %}</h1>
-        <input id="filename-input" onkeypress="handle_enter(event)" style="z-index: 4;font-size: 20px;text-align: center;" type="hidden">
-        <a href="/" class="nav-item">
-            New
-        </a>
+      <h1 style="color: black; cursor: pointer" id="filename">{% if not open_file %}Untitled.txt{% else %}{{open_file}}{% endif %}</h1>
+      <input id="filename-input" onkeypress="handle_enter(event)" style="z-index: 4; font-size: 20px; text-align: center" type="hidden" />
+      <a href="/" class="nav-item"> New </a>
 
-        <a href="" id="save" onclick="submit_form(event)" class="nav-item">
-            Save
-        </a>
+      <a href="" id="save" onclick="submit_form(event)" class="nav-item"> Save </a>
 
-        <!-- <a href="" class="nav-item">
+      <!-- <a href="" class="nav-item">
             Open
         </a> -->
-        <div class="product-price-box">
-            <div class="buy">
-              <!-- <button class="btn-buy">Buy</button> -->
-              <!-- Button for opening dropdown -->
-              <button class="nav-item btn-buy-list" id="dropBtn1">Open</button>
-              <!-- Dropdown menu itself - hidden by default -->
-              <ul class="dropdown-menu">
-                {% for filename in file_list %}
-                <a style="font-size: 1.2em;" href="{% url 'home' %}?file={{filename}}"><li>{{filename}}</li></a>
-                {% endfor %}
-              </ul>
-            </div>
-          </div>
-          
-
+      <div class="product-price-box">
+        <div class="buy">
+          <!-- <button class="btn-buy">Buy</button> -->
+          <!-- Button for opening dropdown -->
+          <button class="nav-item btn-buy-list" id="dropBtn1">Open</button>
+          <!-- Dropdown menu itself - hidden by default -->
+          <ul class="dropdown-menu">
+            {% for filename in file_list %}
+            <a style="font-size: 1.2em" href="{% url 'home' %}?file={{filename}}"><li>{{filename}}</li></a>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
     </nav>
     <form id="my-form" action="{% url 'save' %}" method="POST">
-        {% csrf_token %}
-        <textarea name="notes" autofocus>{%for note in notes %}{{note}}{% endfor %}</textarea>
-        <input id="hidden-filename" name="hidden-filename" type="hidden">
-    <!-- <input type="submit"> -->
+      {% csrf_token %}
+      <textarea name="notes">{%for note in notes %}{{note}}{% endfor %}</textarea>
+      <input id="hidden-filename" name="hidden-filename" type="hidden" />
+      <!-- <input type="submit"> -->
     </form>
-</body>
+  </body>
+  </html>
 
-<script>
+
+
+
+  <script>
+    var text_area = document.querySelector('textarea')
+    console.log( text_area)
     const hidden_filename = document.querySelector("#hidden-filename");
-    const filename = document.querySelector('#filename');
-    const filename_input = document.querySelector('#filename-input');
-    if (window.location.href != 'http://127.0.0.1:8000/'){
-      hidden_filename.value = filename.innerText
+    const filename = document.querySelector("#filename");
+    const filename_input = document.querySelector("#filename-input");
+    if (window.location.href != "http://127.0.0.1:8000/") {
+      hidden_filename.value = filename.innerText;
     }
-    
+
+    text_area.focus()
+    text_area.setSelectionRange(text_area.value.length,text_area.value.length);
+    text_area.scrollTop = text_area.scrollHeight
 
 
-    filename.addEventListener('dblclick', function (e) {
-        filename.style.display = 'none';
-        filename_input.setAttribute('type', 'text');
-        filename_input.value = filename.innerText;
-        // hidden_filename.value = filename.innerText;
-        filename_input.focus();
-    })
-    
-    window.addEventListener('click', function (){
-        if (filename.style.display == 'none')
-        {
-        filename.style.display = 'block';
-        filename.innerText = filename_input.value
-        filename_input.setAttribute('type', 'hidden');
-        document.querySelector('textarea').focus();
-        hidden_filename.value = filename.innerText
+    filename.addEventListener("dblclick", function (e) {
+      filename.style.display = "none";
+      filename_input.setAttribute("type", "text");
+      filename_input.value = filename.innerText;
+      // hidden_filename.value = filename.innerText;
+      filename_input.focus();
+    });
+
+    window.addEventListener("click", function () {
+      if (filename.style.display == "none") {
+        filename.style.display = "block";
+        filename.innerText = filename_input.value;
+        filename_input.setAttribute("type", "hidden");
+        document.querySelector("textarea").focus();
+        hidden_filename.value = filename.innerText;
+      }
+    });
+
+    filename_input.addEventListener("click", function (e) {
+      e.stopPropagation();
+    });
+
+    function handle_enter(event) {
+      if (event.keyCode == 13) {
+        if (filename.style.display == "none") {
+          filename.style.display = "block";
+          filename.innerText = filename_input.value;
+          filename_input.setAttribute("type", "hidden");
+          hidden_filename.value = filename.innerText;
         }
-    })
-
-    filename_input.addEventListener('click', function (e) {
-        e.stopPropagation()
-    })
-
-    function handle_enter(event){
-        if(event.keyCode == 13){
-            if(filename.style.display == 'none')
-        {
-        filename.style.display = 'block';
-        filename.innerText = filename_input.value
-        filename_input.setAttribute('type', 'hidden');
-        hidden_filename.value = filename.innerText
-        }
-        }
+      }
     }
 
     function submit_form(e) {
-        e.preventDefault();
-        if (window.location.href == 'http://127.0.0.1:8000/'){
-          // alert(`${hidden_filename.value}`)
-          if (hidden_filename.value == ''){alert('name your file')}else{document.querySelector('#my-form').submit();}
+      e.preventDefault();
+      if (window.location.href == "http://127.0.0.1:8000/") {
+        // alert(`${hidden_filename.value}`)
+        if (hidden_filename.value == "") {
+          alert("Name your file!");
         } else {
-          document.querySelector('#my-form').submit();
+          document.querySelector("#my-form").submit();
         }
+      } else {
+        document.querySelector("#my-form").submit();
+      }
     }
 
     //toggle dropdown menu open/close
-var toClose = false
+    var toClose = false;
 
-function toggle(e) {
- e.stopPropagation();
-  var btn=this;
-  var menu = btn.nextSibling;
-  
-  while(menu && menu.nodeType != 1) {
-     menu = menu.nextSibling
+    function toggle(e) {
+      e.stopPropagation();
+      var btn = this;
+      var menu = btn.nextSibling;
+
+      while (menu && menu.nodeType != 1) {
+        menu = menu.nextSibling;
+      }
+      if (!menu) return;
+      if (menu.style.display !== "block") {
+        menu.style.display = "block";
+        if (toClose) toClose.style.display = "none";
+        toClose = menu;
+      } else {
+        menu.style.display = "none";
+        toClose = false;
+      }
+    }
+    function closeAll() {
+      toClose.style.display = "none";
+    }
+
+    window.addEventListener("DOMContentLoaded", function () {
+      document.querySelectorAll(".btn-buy-list").forEach(function (btn) {
+        btn.addEventListener("click", toggle, true);
+      });
+    });
+
+    window.onclick = function (event) {
+      if (toClose) {
+        closeAll.call(event.target);
+      }
+    };
+
+
+    document.addEventListener('keydown', function(event) {
+  if (event.ctrlKey && event.key === 's') {
+    // alert('saved!');
+    event.preventDefault()
+    document.querySelector("#my-form").submit();
   }
-  if(!menu) return;
-  if (menu.style.display !== 'block') {
-    menu.style.display = 'block';
-  if(toClose) toClose.style.display="none";
-  toClose = menu;
-  }  else {
-    menu.style.display = 'none';
-  toClose=false;
-  }
-
-};
-function closeAll() {
-  toClose.style.display='none';
-};
-
-window.addEventListener("DOMContentLoaded",function(){
-  document.querySelectorAll(".btn-buy-list").forEach(function(btn){
-     btn.addEventListener("click",toggle,true);
-  });
 });
 
-window.onclick=function(event){
- if (toClose){
-    closeAll.call(event.target);
-  }
-};
 
 
-</script>
-</html>
+
+
+  </script>
