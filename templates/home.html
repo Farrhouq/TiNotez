@@ -45,7 +45,7 @@
 
       textarea {
         margin-top: 5rem;
-        font-size: 2em;
+        font-size: 1.7em;
         width: 97%;
         height: 76.8vh;
         padding: 1rem;
@@ -152,6 +152,13 @@
 
 
   <script>
+
+    var form = document.querySelector("form");
+
+      form.addEventListener("input", (e) => {
+        filename.innerText += '*'
+}, { once: true });
+
     var text_area = document.querySelector('textarea')
     console.log( text_area)
     const hidden_filename = document.querySelector("#hidden-filename");
@@ -213,7 +220,7 @@
       }
     }
 
-    //toggle dropdown menu open/close
+    //toggle dropdown menu open/close sql php mysql ajax  
     var toClose = false;
 
     function toggle(e) {
