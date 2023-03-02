@@ -3,6 +3,7 @@ import random
 from password_manager.logic.shuffle import shuffle
 from password_manager.logic.gen_pass import gen_pass
 from password_manager.logic.farsan import farsan_encrypt, farsan_decrypt
+from django.contrib import messages
 
 # Create your views here.
 
@@ -33,7 +34,7 @@ def authenticate(request):
         if password == farsan_decrypt(my_password):
             return redirect("password", line)
         else:
-            return redirect("home")
+            messages.error(request, "Wrong Password!")
 
     return render(request, "auth.html", {})
 
@@ -45,11 +46,11 @@ def password(request, line):
 
     wherefrom = request.META.get("HTTP_REFERER") if request.META.get(
         "HTTP_REFERER") is not None else ""
-    print("wherefrom?:", wherefrom)
+    # print("wherefrom?:", wherefrom)
     if "http://127.0.0.1:10000/password-manager/auth?line=" not in wherefrom:
         return redirect(f"http://127.0.0.1:10000/password-manager/auth?line={line}")
 
     site = password_set.split(": ")[0].strip()
     password = password_set.split(": ")[1].strip()
-    context = {"site": site, "password": password}
+    context = {"site": site, "password": farsan_decrypt(password)}
     return render(request, "password.html", context)
