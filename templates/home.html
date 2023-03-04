@@ -1,152 +1,150 @@
 <!-- @format -->
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Notes</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 0;
+      }
 
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Notes</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      padding: 0;
-    }
+      nav {
+        background-color: lightgreen;
+        width: 100vw;
+        padding: 10px 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 40px;
+      }
 
-    nav {
-      background-color: lightgreen;
-      width: 100vw;
-      padding: 10px 0;
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 40px;
-    }
+      .nav-item {
+        background-color: lightblue;
+        width: fit-content;
+        padding: 10px;
+        font-size: 1.1em;
+        border-radius: 6px;
+        border: 2px solid blue;
+        text-decoration: none;
+      }
 
-    .nav-item {
-      background-color: lightblue;
-      width: fit-content;
-      padding: 10px;
-      font-size: 1.1em;
-      border-radius: 6px;
-      border: 2px solid blue;
-      text-decoration: none;
-    }
+      .nav-item:visited {
+        color: black;
+      }
 
-    .nav-item:visited {
-      color: black;
-    }
+      textarea {
+        margin-top: 5rem;
+        font-size: 1.5em;
+        width: 97%;
+        height: 76.8vh;
+        padding: 1rem;
+      }
 
-    textarea {
-      margin-top: 5rem;
-      font-size: 1.5em;
-      width: 97%;
-      height: 76.8vh;
-      padding: 1rem;
-    }
+      .btn-buy {
+        border: 1px solid #dedede;
+        border-bottom: 1px solid #b5b5b5;
+        border-right: none;
+        border-radius: 3px 0 0 3px;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 6px 14px;
+        margin-top: 15px;
+        background: linear-gradient(#fff, #efefef);
+      }
 
-    .btn-buy {
-      border: 1px solid #dedede;
-      border-bottom: 1px solid #b5b5b5;
-      border-right: none;
-      border-radius: 3px 0 0 3px;
-      font-size: 12px;
-      font-weight: bold;
-      padding: 6px 14px;
-      margin-top: 15px;
-      background: linear-gradient(#fff, #efefef);
-    }
+      .btn-buy:hover {
+        background: #efefef;
+      }
 
-    .btn-buy:hover {
-      background: #efefef;
-    }
+      .btn-buy-list:hover {
+        background: #efefef;
+      }
 
-    .btn-buy-list:hover {
-      background: #efefef;
-    }
+      .btn-buy:active,
+      .btn-buy:focus,
+      .btn-buy-list:active,
+      .btn-buy-list:focus {
+        outline: none;
+        background: #ddd;
+      }
 
-    .btn-buy:active,
-    .btn-buy:focus,
-    .btn-buy-list:active,
-    .btn-buy-list:focus {
-      outline: none;
-      background: #ddd;
-    }
+      .btn-arrow {
+        width: 0;
+        height: 0;
+        border-top: 5px solid black;
+        border-right: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        border-left: 5px solid transparent;
+        position: relative;
+        top: 10px;
+      }
 
-    .btn-arrow {
-      width: 0;
-      height: 0;
-      border-top: 5px solid black;
-      border-right: 5px solid transparent;
-      border-bottom: 5px solid transparent;
-      border-left: 5px solid transparent;
-      position: relative;
-      top: 10px;
-    }
+      .dropdown-menu {
+        position: absolute;
+        z-index: 1000;
+        display: none;
+        min-width: 160px;
+        padding: 5px 0;
+        margin: -1px 0 0 0;
+        list-style: none;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+        background-clip: padding-box;
+      }
 
-    .dropdown-menu {
-      position: absolute;
-      z-index: 1000;
-      display: none;
-      min-width: 160px;
-      padding: 5px 0;
-      margin: -1px 0 0 0;
-      list-style: none;
-      background-color: #fff;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-      background-clip: padding-box;
-    }
+      .dropdown-menu a {
+        text-decoration: none;
+      }
 
-    .dropdown-menu a {
-      text-decoration: none;
-    }
+      .dropdown-menu a li {
+        font-size: 12px;
+        font-family: arial, sans-serif;
+        color: #222;
+        padding: 5px 15px;
+      }
 
-    .dropdown-menu a li {
-      font-size: 12px;
-      font-family: arial, sans-serif;
-      color: #222;
-      padding: 5px 15px;
-    }
+      .dropdown-menu a li:hover {
+        background-color: #bae2fc;
+      }
+    </style>
+  </head>
 
-    .dropdown-menu a li:hover {
-      background-color: #bae2fc;
-    }
-  </style>
-</head>
-
-<body>
-  <nav>
-    <h1 style="color: black; cursor: pointer" id="filename">{% if not open_file %}Untitled.txt{% else %}{{open_file}}{%endif %}</h1>
-    <input id="filename-input" onkeypress="handle_enter(event)" style="z-index: 4; font-size: 20px; text-align: center"
-      type="hidden" />
-    <a href="/" class="nav-item" id="new-btn"> New</a>
-    <a href="" id="save" onclick="submit_form(event)" class="nav-item"> Save</a>
-    <div class="product-price-box">
-      <button class="nav-item btn-buy-list" id="open-btn">Open</button>
-      <!-- Dropdown menu itself - hidden by default -->
-      <ul class="dropdown-menu">
-        {% for filename in file_list %}
-        <a style="font-size: 1.2em" href="{% url 'home' %}?file={{filename}}">
-          <li>{{filename}}</li>
-        </a>
-        {% endfor %}
-      </ul>
-    </div>
-  </nav>
-  <form id="my-form" action="{% url 'save' %}" method="POST">
-    {% csrf_token %}
-    <textarea name="notes">{%for note in notes %}{{note}}{% endfor %}</textarea>
-    <input id="hidden-filename" name="hidden-filename" type="hidden" />
-    <!-- <input type="submit"> -->
-  </form>
-</body>
-
+  <body>
+    <nav>
+      <h1 style="color: black; cursor: pointer" id="filename">{% if not open_file %}Untitled.txt{% else %}{{open_file}}{%endif %}</h1>
+      <input id="filename-input" onkeypress="handle_enter(event)" style="z-index: 4; font-size: 20px; text-align: center" type="hidden" />
+      <a href="/" class="nav-item" id="new-btn"> New</a>
+      <a href="" id="save" onclick="submit_form(event)" class="nav-item"> Save</a>
+      <div class="product-price-box">
+        <button class="nav-item btn-buy-list" id="open-btn">Open</button>
+        <!-- Dropdown menu itself - hidden by default -->
+        <ul class="dropdown-menu">
+          {% for filename in file_list %}
+          <a style="font-size: 1.2em" href="{% url 'home' %}?file={{filename}}">
+            <li>{{filename}}</li>
+          </a>
+          {% endfor %}
+        </ul>
+      </div>
+    </nav>
+    <form id="my-form" action="{% url 'save' %}" method="POST">
+      {% csrf_token %}
+      <textarea name="notes">{%for note in notes %}{{note}}{% endfor %}</textarea>
+      <input id="hidden-filename" name="hidden-filename" type="hidden" />
+      <input type="hidden" name="original_filename" value="{{open_file}}" />
+      <!-- <input type="submit"> -->
+    </form>
+  </body>
 </html>
 <script>
   const form = document.querySelector("form");
@@ -160,15 +158,14 @@
     hidden_filename.value = filename.innerText;
   }
 
-
-  new_btn.addEventListener('click', function (event) {
+  new_btn.addEventListener("click", function (event) {
     if (filename.innerText[filename.innerText.length - 1] == "*") {
-      event.preventDefault()
+      event.preventDefault();
       alert("Save your file or refresh the page to clear all changes");
       // alert('You have not saved your file. Autosaving...');
       // document.querySelector("#my-form").submit();
     }
-  })
+  });
   text_area.focus();
   text_area.setSelectionRange(text_area.value.length, text_area.value.length);
   text_area.scrollTop = text_area.scrollHeight;
@@ -221,9 +218,23 @@
       if (hidden_filename.value == "") {
         alert("Name your file!");
       } else {
+        if (filename.style.display == "none") {
+          filename.style.display = "block";
+          filename.innerText = filename_input.value;
+          filename_input.setAttribute("type", "hidden");
+          document.querySelector("textarea").focus();
+          hidden_filename.value = filename.innerText;
+        }
         document.querySelector("#my-form").submit();
       }
     } else {
+      if (filename.style.display == "none") {
+        filename.style.display = "block";
+        filename.innerText = filename_input.value;
+        filename_input.setAttribute("type", "hidden");
+        document.querySelector("textarea").focus();
+        hidden_filename.value = filename.innerText;
+      }
       document.querySelector("#my-form").submit();
     }
   }
@@ -238,25 +249,23 @@
       // alert('You have not saved your file. Autosaving...');
       // document.querySelector("#my-form").submit();
     } else {
-
-      
       var btn = this;
-    var menu = btn.nextSibling;
+      var menu = btn.nextSibling;
 
-    while (menu && menu.nodeType != 1) {
-      menu = menu.nextSibling;
-    }
-    if (!menu) return;
-    if (menu.style.display !== "block") {
-      menu.style.display = "block";
-      if (toClose) toClose.style.display = "none";
-      toClose = menu;
-    } else {
-      menu.style.display = "none";
-      toClose = false;
+      while (menu && menu.nodeType != 1) {
+        menu = menu.nextSibling;
+      }
+      if (!menu) return;
+      if (menu.style.display !== "block") {
+        menu.style.display = "block";
+        if (toClose) toClose.style.display = "none";
+        toClose = menu;
+      } else {
+        menu.style.display = "none";
+        toClose = false;
+      }
     }
   }
-}
   function closeAll() {
     toClose.style.display = "none";
   }
