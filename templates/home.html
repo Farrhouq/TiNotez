@@ -7,9 +7,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Notes</title>
     <style>
+
+      .full-width {
+        width:100%;
+      }
+
       body {
         font-family: sans-serif;
         padding: 0;
+        background-color: rgb(62, 24, 88);
       }
 
       nav {
@@ -46,6 +52,8 @@
         width: 97%;
         height: 76.8vh;
         padding: 1rem;
+        background: rgb(39, 71, 90);
+        color: white
       }
 
       .btn-buy {
@@ -92,7 +100,7 @@
         z-index: 1000;
         display: none;
         min-width: 160px;
-        padding: 5px 0;
+        padding: 0;
         margin: -1px 0 0 0;
         list-style: none;
         background-color: #fff;
@@ -100,6 +108,7 @@
         border-radius: 3px;
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
         background-clip: padding-box;
+        
       }
 
       .dropdown-menu a {
@@ -111,38 +120,135 @@
         font-family: arial, sans-serif;
         color: #222;
         padding: 5px 15px;
+        border: 1px solid rgb(20, 76, 179);
       }
 
       .dropdown-menu a li:hover {
         background-color: #bae2fc;
       }
+
+      .fore-button {
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+        width: 100%;
+        height: 35px;
+        border: 2px solid #0b8dca;
+        font-size: medium;
+        padding: 1px 10px;
+        font-style: italic;
+        font-weight: 600;
+        margin-top: 1px;
+      }
+
+      .btn {
+        text-align: center;
+        padding: 4%;
+        background-color: white;
+        line-height: 50%;
+        width: fit-content;
+        margin: 0;
+        border: 1px solid blue;
+        color: blue;
+        border-radius: 5px;
+        border-radius: 0 0 0 0;
+      }
+
+      .btn.active {
+        background-color: blue;
+        color: white;
+      }
+
+      .category-box {
+        padding: 0;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: center;
+        justify-self: flex-end;
+        width: 400px;
+        margin-left: 150px;
+        
+      }
+
     </style>
   </head>
 
   <body>
     <nav>
       <h1 style="color: black; cursor: pointer" id="filename">{% if not open_file %}Untitled.txt{% else %}{{open_file}}{%endif %}</h1>
+
       <input id="filename-input" onkeypress="handle_enter(event)" style="z-index: 4; font-size: 20px; text-align: center" type="hidden" />
+
       <a href="/" class="nav-item" id="new-btn"> New</a>
+
       <a href="" id="save" onclick="submit_form(event)" class="nav-item"> Save</a>
+
       <div class="product-price-box">
         <button class="nav-item btn-buy-list" id="open-btn">Open</button>
         <!-- Dropdown menu itself - hidden by default -->
-        <ul class="dropdown-menu">
-          {% for filename in file_list %}
-          <a style="font-size: 1.2em" href="{% url 'home' %}?file={{filename}}">
-            <li>{{filename}}</li>
-          </a>
-          {% endfor %}
+        <ul class="dropdown-menu" style="padding:0; background:#0b8dca;">
+
+          <li class="">
+            <div class="" onmouseenter="show_children(this)" onmouseleave="hide_children(this)">
+              <button class="fore-button" id="">ACADEMIA &LongRightArrow;</button>
+              <ul class="dropdown-menu" style="width: 100%">
+                {% for filename in academia_file_list %}
+                  <a style="font-size: 1.2em" href="{% url 'home' %}?file={{filename}}">
+                    <li>{{filename}}</li>
+                  </a>
+                {% endfor %}
+              </ul>
+            </div>
+          </li>
+
+          <li class="">
+            <div class="" onmouseenter="show_children(this)" onmouseleave="hide_children(this)">
+              <button class="fore-button" id="">PROGRAMMING LIFE &LongRightArrow;</button>
+              <ul class="dropdown-menu" style="width: 100%">
+                {% for filename in programming_life_file_list %}
+                  <a style="font-size: 1.2em" href="{% url 'home' %}?file={{filename}}">
+                    <li>{{filename}}</li>
+                  </a>
+                {% endfor %}
+              </ul>
+            </div>
+          </li>
+
+          <li class="">
+            <div class="" onmouseenter="show_children(this)" onmouseleave="hide_children(this)">
+              <button class="fore-button" id="">SHOWER THOUGHTS &LongRightArrow;</button>
+              <ul class="dropdown-menu" style="width: 100%">
+                {% for filename in sts_file_list %}
+                  <a style="font-size: 1.2em" href="{% url 'home' %}?file={{filename}}">
+                    <li>{{filename}}</li>
+                  </a>
+                {% endfor %}
+              </ul>
+            </div>
+          </li>
+         
+          
+          
         </ul>
       </div>
+      
+      <div class="category-box btn-group">
+        <button class="btn" onclick="change_active(this)" style="border-bottom-left-radius: 7px; border-top-left-radius:7px">Academia</button>
+        <button class="btn" onclick="change_active(this)">Programming Life</button>
+        <button class="btn" onclick="change_active(this)" style="border-top-right-radius: 7px; border-bottom-right-radius:7px">Shower Thoughts</button>
+      </div>
+      
     </nav>
     <form id="my-form" action="{% url 'save' %}" method="POST">
       {% csrf_token %}
       <textarea name="notes">{%for note in notes %}{{note}}{% endfor %}</textarea>
       <input id="hidden-filename" name="hidden-filename" type="hidden" />
-      <input type="hidden" name="original_filename" value="{{open_file}}" />
+      <input type="hidden" name="original_filename" value="{% if open_file %}{{open_file}}{% endif %}" />
       <!-- <input type="submit"> -->
+      <input type="hidden" id="category" name="category" value="{% if file_category %}{{file_category}}{% endif %}">
     </form>
   </body>
 </html>
@@ -154,8 +260,50 @@
   const hidden_filename = document.querySelector("#hidden-filename");
   const filename = document.querySelector("#filename");
   const filename_input = document.querySelector("#filename-input");
-  if (window.location.href != "http://127.0.0.1:8000/") {
+  const category_box = document.querySelector(".category-box");
+  const buttons = category_box.querySelectorAll("button");
+  const category = document.querySelector("#category");
+
+  for(button of buttons) {
+    if(button.innerText == category.value){
+    button.setAttribute("class", " btn active");
+
+    }
+  }
+
+  if (window.location.href != "http://127.0.0.1:10000/") {
     hidden_filename.value = filename.innerText;
+
+  }
+
+  if (window.location.href == "http://127.0.0.1:10000/") {
+    function change_active(button){
+    if (button.matches(".active")){
+      button.setAttribute("class", "btn");
+
+    }
+    else {
+      button.setAttribute("class", " btn active");
+      for (other_button of buttons){
+        if(other_button != button){
+          other_button.setAttribute("class", "btn");
+          }
+        }
+        category.value = button.innerText;
+      }
+    }
+  }
+  
+
+  function show_children(element){
+    element.firstElementChild.nextElementSibling.style.display = "block";
+    element.firstElementChild.nextElementSibling.style.marginLeft = "215px";
+    element.firstElementChild.nextElementSibling.style.marginTop = "-50px";
+  }
+
+  function hide_children(element){
+    element.firstElementChild.nextElementSibling.style.display = "none";
+    element.firstElementChild.nextElementSibling.style.marginLeft = "";
   }
 
   new_btn.addEventListener("click", function (event) {
@@ -173,7 +321,9 @@
   form.addEventListener(
     "input",
     (e) => {
-      filename.innerText += "*";
+      if(filename != "Untitled.txt"){
+        filename.innerText += "*";
+      }
     },
     { once: true }
   );
@@ -213,9 +363,9 @@
 
   function submit_form(e) {
     e.preventDefault();
-    if (window.location.href == "http://127.0.0.1:8000/") {
-      // alert(`${hidden_filename.value}`)
-      if (hidden_filename.value == "") {
+    if (window.location.href == "http://127.0.0.1:10000/") {
+       //alert(`${hidden_filename.value}`);
+      if (hidden_filename.value == "" | hidden_filename.value == "Untitled.txt") {
         alert("Name your file!");
       } else {
         if (filename.style.display == "none") {
