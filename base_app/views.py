@@ -15,14 +15,14 @@ directory = os.fsencode("C:/Users/Farouq/Documents/Notes/")
     
 directories = [os.fsencode("C:/Users/Farouq/Documents/Notes/ACADEMIA"), 
                 os.fsencode("C:/Users/Farouq/Documents/Notes/PROGRAMMING LIFE"), 
-                os.fsencode("C:/Users/Farouq/STs"),
+                os.fsencode("C:/Users/Farouq/Documents/Notes/OTHER"),
                 ]
 file_list = []
 academia_file_list = []
 programming_life_file_list = []
-sts_file_list = []
+others_file_list = []
 
-file_list_list = [academia_file_list, programming_life_file_list, sts_file_list]
+file_list_list = [academia_file_list, programming_life_file_list, others_file_list]
 
 for file in os.listdir(directory):
     filename = os.fsdecode(file)
@@ -48,9 +48,9 @@ def home(request):
                 context.update({"notes":notes, 'file_category': "Academia"})
         except FileNotFoundError:
             try:
-                with open(f'C:/Users/Farouq/STs/{open_file}', 'r') as file_opened:
+                with open(f'C:/Users/Farouq/Documents/Notes/OTHER/{open_file}', 'r') as file_opened:
                     notes = file_opened.readlines()
-                    context.update({"notes":notes, 'file_category': "Shower Thoughts"})
+                    context.update({"notes":notes, 'file_category': "Other"})
             except:
                 with open(f'C:/Users/Farouq/Documents/Notes/PROGRAMMING LIFE/{open_file}', 'r') as file_opened:
                     notes = file_opened.readlines()
@@ -60,7 +60,7 @@ def home(request):
                     'file_list':file_list, 
                     'academia_file_list':academia_file_list,
                     'programming_life_file_list':programming_life_file_list, 
-                    'sts_file_list':sts_file_list})
+                    'others_file_list':others_file_list})
     return render(request, 'home.html', context)
         
 
@@ -78,8 +78,8 @@ def save(request):
                 os.rename(f'C:/Users/Farouq/Documents/Notes/ACADEMIA/{original_filename}', f'C:/Users/Farouq/Documents/Notes/ACADEMIA/{filename}')
             elif original_filename in programming_life_file_list:
                 os.rename(f'C:/Users/Farouq/Documents/Notes/PROGRAMMING LIFE/{original_filename}', f'C:/Users/Farouq/Documents/Notes/PROGRAMMING LIFE/{filename}')
-            elif original_filename in sts_file_list:
-                os.rename(f'C:/Users/Farouq/STs/{original_filename}', f'C:/Users/Farouq/STs/{filename}')
+            elif original_filename in others_file_list:
+                os.rename(f'C:/Users/Farouq/Documents/Notes/OTHER/{original_filename}', f'C:/Users/Farouq/Documents/Notes/OTHER/{filename}')
             
             
         if category == "Academia":
@@ -90,8 +90,8 @@ def save(request):
             with open(f'C:/Users/Farouq/Documents/Notes/PROGRAMMING LIFE/{filename}', 'w') as file:
                 for note in notes:
                     file.write(note.rstrip('\n'))
-        elif category == "Shower Thoughts":
-            with open(f'C:/Users/Farouq/STs/{filename}', 'w') as file:
+        elif category == "Other":
+            with open(f'C:/Users/Farouq/Documents/Notes/OTHER/{filename}', 'w') as file:
                 for note in notes:
                     file.write(note.rstrip('\n'))
                     

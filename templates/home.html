@@ -170,7 +170,31 @@
         justify-self: flex-end;
         width: 400px;
         margin-left: 150px;
-        
+      }
+       
+      #passcode-input {
+        height: 25px;
+        font-size: 18px;
+        border-radius: 3px;
+        left: 50%;
+        top: 10%;
+        z-index: 1000000;
+        border: 3px solid #0b8dca;
+      }
+
+      #passcode-div {
+        padding: 5px;
+        display: none;
+        position: absolute;
+        left: 50%;
+        width: 320px;
+      }
+      
+      .confirm-passcode {
+        padding: 6px;
+        font-size: 14px;
+        border-radius: 3px;
+        border: 3px solid #0b8dca;
       }
 
     </style>
@@ -219,26 +243,28 @@
 
           <li class="">
             <div class="" onmouseenter="show_children(this)" onmouseleave="hide_children(this)">
-              <button class="fore-button" id="">SHOWER THOUGHTS &LongRightArrow;</button>
+              <button class="fore-button" id="">OTHER &LongRightArrow;</button>
               <ul class="dropdown-menu" style="width: 100%">
-                {% for filename in sts_file_list %}
-                  <a style="font-size: 1.2em" href="{% url 'home' %}?file={{filename}}">
+                {% for filename in others_file_list %}
+                  <a onclick="authenticate(this)" style="font-size: 1.2em" href="{% url 'home' %}?file={{filename}}">
                     <li>{{filename}}</li>
                   </a>
-                {% endfor %}
-              </ul>
-            </div>
+                  {% endfor %}
+                </ul>
+                <div id="passcode-div">
+                  <input id="passcode-input" type="password" placeholder="Enter passcode">
+                   <button class="confirm-passcode">Confirm</button>
+                </div>
+              </div>
           </li>
-         
-          
-          
+            
         </ul>
       </div>
       
       <div class="category-box btn-group">
         <button class="btn" onclick="change_active(this)" style="border-bottom-left-radius: 7px; border-top-left-radius:7px">Academia</button>
-        <button class="btn" onclick="change_active(this)">Programming Life</button>
-        <button class="btn" onclick="change_active(this)" style="border-top-right-radius: 7px; border-bottom-right-radius:7px">Shower Thoughts</button>
+        <button class="btn"  onclick="change_active(this)">Programming Life</button>
+        <button class="btn" onclick="change_active(this)" style="border-top-right-radius: 7px; border-bottom-right-radius:7px">Other</button>
       </div>
       
     </nav>
@@ -253,190 +279,227 @@
   </body>
 </html>
 <script>
-  const form = document.querySelector("form");
-  const text_area = document.querySelector("textarea");
-  const open_btn = document.querySelector("#open-btn");
-  const new_btn = document.querySelector("#new-btn");
-  const hidden_filename = document.querySelector("#hidden-filename");
-  const filename = document.querySelector("#filename");
-  const filename_input = document.querySelector("#filename-input");
-  const category_box = document.querySelector(".category-box");
-  const buttons = category_box.querySelectorAll("button");
-  const category = document.querySelector("#category");
+    const form = document.querySelector("form");
+    const text_area = document.querySelector("textarea");
+    const open_btn = document.querySelector("#open-btn");
+    const new_btn = document.querySelector("#new-btn");
+    const hidden_filename = document.querySelector("#hidden-filename");
+    const filename = document.querySelector("#filename");
+    const filename_input = document.querySelector("#filename-input");
+    const category_box = document.querySelector(".category-box");
+    const buttons = category_box.querySelectorAll("button");
+    const category = document.querySelector("#category");
+   /* const passcode_div = document.querySelector("#passcode-div");
+    const passcode_input = document.querySelector("#passcode-input");
+    const confirm_passcode = document.querySelector(".confirm-passcode");
+    var redirect_url = "" 
 
-  for(button of buttons) {
-    if(button.innerText == category.value){
-    button.setAttribute("class", " btn active");
+    passcode_input.addEventListener("click", function () {
+        event.stopPropagation();
+    })
 
-    }
-  }
+    passcode_input.addEventListener("change", function () {
 
-  if (window.location.href != "http://127.0.0.1:10000/") {
-    hidden_filename.value = filename.innerText;
+    })
+    
 
-  }
-
-  if (window.location.href == "http://127.0.0.1:10000/") {
-    function change_active(button){
-    if (button.matches(".active")){
-      button.setAttribute("class", "btn");
-
-    }
-    else {
-      button.setAttribute("class", " btn active");
-      for (other_button of buttons){
-        if(other_button != button){
-          other_button.setAttribute("class", "btn");
-          }
+    confirm_passcode.addEventListener("click", function () {
+        if (passcode_input.value != password) {
+            alert("Wrong Password!");
+            return
         }
-        category.value = button.innerText;
-      }
+        window.location.replace(redirect_url);
+    })
+    
+    function authenticate(element) {
+        event.preventDefault();
+        console.log(element.getAttribute("href"));
+        event.stopPropagation();
+        passcode_div.style.display = "none";
+        setTimeout(function() {passcode_div.style.display = "block";}, 100)
+        
+        redirect_url = element.getAttribute("href");
     }
-  }
-  
+    */
 
-  function show_children(element){
-    element.firstElementChild.nextElementSibling.style.display = "block";
-    element.firstElementChild.nextElementSibling.style.marginLeft = "215px";
-    element.firstElementChild.nextElementSibling.style.marginTop = "-50px";
-  }
+    for (button of buttons) {
+        if (button.innerText == category.value) {
+            button.setAttribute("class", " btn active");
 
-  function hide_children(element){
-    element.firstElementChild.nextElementSibling.style.display = "none";
-    element.firstElementChild.nextElementSibling.style.marginLeft = "";
-  }
-
-  new_btn.addEventListener("click", function (event) {
-    if (filename.innerText[filename.innerText.length - 1] == "*") {
-      event.preventDefault();
-      alert("Save your file or refresh the page to clear all changes");
-      // alert('You have not saved your file. Autosaving...');
-      // document.querySelector("#my-form").submit();
+        }
     }
-  });
-  text_area.focus();
-  text_area.setSelectionRange(text_area.value.length, text_area.value.length);
-  text_area.scrollTop = text_area.scrollHeight;
 
-  form.addEventListener(
-    "input",
-    (e) => {
-      if(filename != "Untitled.txt"){
-        filename.innerText += "*";
-      }
-    },
-    { once: true }
-  );
-
-  filename.addEventListener("dblclick", function (e) {
-    filename.style.display = "none";
-    filename_input.setAttribute("type", "text");
-    filename_input.value = filename.innerText;
-    // hidden_filename.value = filename.innerText;
-    filename_input.focus();
-  });
-
-  window.addEventListener("click", function () {
-    if (filename.style.display == "none") {
-      filename.style.display = "block";
-      filename.innerText = filename_input.value;
-      filename_input.setAttribute("type", "hidden");
-      document.querySelector("textarea").focus();
-      hidden_filename.value = filename.innerText;
-    }
-  });
-
-  filename_input.addEventListener("click", function (e) {
-    e.stopPropagation();
-  });
-
-  function handle_enter(event) {
-    if (event.keyCode == 13) {
-      if (filename.style.display == "none") {
-        filename.style.display = "block";
-        filename.innerText = filename_input.value;
-        filename_input.setAttribute("type", "hidden");
+    if (window.location.href != "http://127.0.0.1:10000/") {
         hidden_filename.value = filename.innerText;
-      }
     }
-  }
 
-  function submit_form(e) {
-    e.preventDefault();
     if (window.location.href == "http://127.0.0.1:10000/") {
-       //alert(`${hidden_filename.value}`);
-      if (hidden_filename.value == "" | hidden_filename.value == "Untitled.txt") {
-        alert("Name your file!");
-      } else {
-        if (filename.style.display == "none") {
-          filename.style.display = "block";
-          filename.innerText = filename_input.value;
-          filename_input.setAttribute("type", "hidden");
-          document.querySelector("textarea").focus();
-          hidden_filename.value = filename.innerText;
+        function change_active(button) {
+            if (button.matches(".active")) {
+                button.setAttribute("class", "btn");
+                category.value = "";
+                //console.log(category.value);
+              } else {
+                button.setAttribute("class", " btn active");
+                for (other_button of buttons) {
+                    if (other_button != button) {
+                        other_button.setAttribute("class", "btn");
+                    }
+                }
+                category.value = button.innerText;
+                //console.log(category.value);
+            }
         }
-        document.querySelector("#my-form").submit();
-      }
-    } else {
-      if (filename.style.display == "none") {
-        filename.style.display = "block";
-        filename.innerText = filename_input.value;
-        filename_input.setAttribute("type", "hidden");
-        document.querySelector("textarea").focus();
-        hidden_filename.value = filename.innerText;
-      }
-      document.querySelector("#my-form").submit();
     }
-  }
 
-  //toggle dropdown menu open/close
-  var toClose = false;
+   
 
-  function toggle(e) {
-    e.stopPropagation();
-    if (filename.innerText[filename.innerText.length - 1] == "*") {
-      alert("Save your file or refresh the page to clear all changes");
-      // alert('You have not saved your file. Autosaving...');
-      // document.querySelector("#my-form").submit();
-    } else {
-      var btn = this;
-      var menu = btn.nextSibling;
-
-      while (menu && menu.nodeType != 1) {
-        menu = menu.nextSibling;
-      }
-      if (!menu) return;
-      if (menu.style.display !== "block") {
-        menu.style.display = "block";
-        if (toClose) toClose.style.display = "none";
-        toClose = menu;
-      } else {
-        menu.style.display = "none";
-        toClose = false;
-      }
+    function show_children(element) {
+        element.firstElementChild.nextElementSibling.style.display = "block";
+        element.firstElementChild.nextElementSibling.style.marginLeft = "215px";
+        element.firstElementChild.nextElementSibling.style.marginTop = "-50px";
     }
-  }
-  function closeAll() {
-    toClose.style.display = "none";
-  }
 
-  window.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".btn-buy-list").forEach(function (btn) {
-      btn.addEventListener("click", toggle, true);
+    function hide_children(element) {
+        element.firstElementChild.nextElementSibling.style.display = "none";
+        element.firstElementChild.nextElementSibling.style.marginLeft = "";
+    }
+
+    new_btn.addEventListener("click", function (event) {
+        if (filename.innerText[filename.innerText.length - 1] == "*") {
+            event.preventDefault();
+            alert("Save your file or refresh the page to clear all changes");
+            // alert('You have not saved your file. Autosaving...');
+            // document.querySelector("#my-form").submit();
+        }
     });
-  });
+    text_area.focus();
+    text_area.setSelectionRange(text_area.value.length, text_area.value.length);
+    text_area.scrollTop = text_area.scrollHeight;
 
-  window.onclick = function (event) {
-    if (toClose) {
-      closeAll.call(event.target);
-    }
-  };
+    form.addEventListener("input", (e) => {
+        if (filename != "Untitled.txt") {
+            filename.innerText += "*";
+        }
+    }, {once: true});
 
-  document.addEventListener("keydown", function (event) {
-    if (event.ctrlKey && event.key === "s") {
-      // alert('saved!');
-      event.preventDefault();
-      document.querySelector("#my-form").submit();
+    filename.addEventListener("dblclick", function (e) {
+        filename.style.display = "none";
+        filename_input.setAttribute("type", "text");
+        filename_input.value = filename.innerText;
+        // hidden_filename.value = filename.innerText;
+        filename_input.focus();
+    });
+
+    window.addEventListener("click", function () {
+        if (filename.style.display == "none") {
+            filename.style.display = "block";
+            filename.innerText = filename_input.value;
+            filename_input.setAttribute("type", "hidden");
+            document.querySelector("textarea").focus();
+            hidden_filename.value = filename.innerText;
+        }
+    });
+
+    filename_input.addEventListener("click", function (e) {
+        e.stopPropagation();
+    });
+
+    function handle_enter(event) {
+        if (event.keyCode == 13) {
+            if (filename.style.display == "none") {
+                filename.style.display = "block";
+                filename.innerText = filename_input.value;
+                filename_input.setAttribute("type", "hidden");
+                hidden_filename.value = filename.innerText;
+            }
+        }
     }
-  });
+
+    function submit_form(e) {
+        e.preventDefault();
+        if (window.location.href == "http://127.0.0.1:10000/") {
+            if (hidden_filename.value == "" | hidden_filename.value == "Untitled.txt") {
+                alert("Name your file!");
+            } 
+            else if(category.value == "") {
+              alert("Select a category");
+            }
+             else {
+                if (filename.style.display == "none") {
+                    filename.style.display = "block";
+                    filename.innerText = filename_input.value;
+                    filename_input.setAttribute("type", "hidden");
+                    document.querySelector("textarea").focus();
+                    hidden_filename.value = filename.innerText;
+                }
+                document.querySelector("#my-form").submit();
+            }
+        } else {
+            if (filename.style.display == "none") {
+                filename.style.display = "block";
+                filename.innerText = filename_input.value;
+                filename_input.setAttribute("type", "hidden");
+                document.querySelector("textarea").focus();
+                hidden_filename.value = filename.innerText;
+            }
+            document.querySelector("#my-form").submit();
+        }
+    }
+
+    // toggle dropdown menu open/close
+    var toClose = false;
+
+    function toggle(e) {
+        e.stopPropagation();
+        if (filename.innerText[filename.innerText.length - 1] == "*") {
+            alert("Save your file or refresh the page to clear all changes");
+            // alert('You have not saved your file. Autosaving...');
+            // document.querySelector("#my-form").submit();
+        } else {
+            var btn = this;
+            var menu = btn.nextSibling;
+
+            while (menu && menu.nodeType != 1) {
+                menu = menu.nextSibling;
+            }
+            if (! menu) 
+                return;
+            
+            if (menu.style.display !== "block") {
+                menu.style.display = "block";
+                if (toClose) 
+                    toClose.style.display = "none";
+                
+                toClose = menu;
+            } else {
+                menu.style.display = "none";
+                toClose = false;
+            }
+        }
+    }
+    function closeAll() {
+        toClose.style.display = "none";
+    }
+
+    window.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".btn-buy-list").forEach(function (btn) {
+            btn.addEventListener("click", toggle, true);
+        });
+    });
+
+    window.onclick = function (event) {
+        if (toClose) {
+            closeAll.call(event.target);
+        }
+    };
+
+    document.addEventListener("keydown", function (event) {
+        if (event.ctrlKey && event.key === "s") { // alert('saved!');
+            event.preventDefault();
+            document.querySelector("#my-form").submit();
+        }
+    });
+    const password = "fuckyoustupid"
 </script>
+
