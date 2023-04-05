@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 import os
 
-directory = os.fsencode("C:/Users/Farouq/Documents/Notes/")
+directory = os.fsencode("/home/farouq/Documents/Notes/")
 file_list = []
 context = {}
 for file in os.listdir(directory):
@@ -11,11 +11,11 @@ for file in os.listdir(directory):
         file_list.append(filename)
 
 
-directory = os.fsencode("C:/Users/Farouq/Documents/Notes/")
+directory = os.fsencode("/home/farouq/Documents/Notes/")
     
-directories = [os.fsencode("C:/Users/Farouq/Documents/Notes/ACADEMIA"), 
-                os.fsencode("C:/Users/Farouq/Documents/Notes/PROGRAMMING LIFE"), 
-                os.fsencode("C:/Users/Farouq/Documents/Notes/OTHER"),
+directories = [os.fsencode("/home/farouq/Documents/Notes/ACADEMIA"), 
+                os.fsencode("/home/farouq/Documents/Notes/PROGRAMMING LIFE"), 
+                os.fsencode("/home/farouq/Documents/Notes/OTHER"),
                 ]
 file_list = []
 academia_file_list = []
@@ -43,16 +43,16 @@ def home(request):
 
     if open_file is not None:
         try:
-            with open(f'C:/Users/Farouq/Documents/Notes/ACADEMIA/{open_file}', 'r') as file_opened:
+            with open(f'/home/farouq/Documents/Notes/ACADEMIA/{open_file}', 'r') as file_opened:
                 notes = file_opened.readlines()
                 context.update({"notes":notes, 'file_category': "Academia"})
         except FileNotFoundError:
             try:
-                with open(f'C:/Users/Farouq/Documents/Notes/OTHER/{open_file}', 'r') as file_opened:
+                with open(f'/home/farouq/Documents/Notes/OTHER/{open_file}', 'r') as file_opened:
                     notes = file_opened.readlines()
                     context.update({"notes":notes, 'file_category': "Other"})
             except:
-                with open(f'C:/Users/Farouq/Documents/Notes/PROGRAMMING LIFE/{open_file}', 'r') as file_opened:
+                with open(f'/home/farouq/Documents/Notes/PROGRAMMING LIFE/{open_file}', 'r') as file_opened:
                     notes = file_opened.readlines()
                     context.update({'notes':notes ,'file_category': 'Programming Life'})
             
@@ -75,23 +75,23 @@ def save(request):
         
         if original_filename != '' and original_filename != filename :
             if original_filename in academia_file_list:
-                os.rename(f'C:/Users/Farouq/Documents/Notes/ACADEMIA/{original_filename}', f'C:/Users/Farouq/Documents/Notes/ACADEMIA/{filename}')
+                os.rename(f'/home/farouq/Documents/Notes/ACADEMIA/{original_filename}', f'/home/farouq/Documents/Notes/ACADEMIA/{filename}')
             elif original_filename in programming_life_file_list:
-                os.rename(f'C:/Users/Farouq/Documents/Notes/PROGRAMMING LIFE/{original_filename}', f'C:/Users/Farouq/Documents/Notes/PROGRAMMING LIFE/{filename}')
+                os.rename(f'/home/farouq/Documents/Notes/PROGRAMMING LIFE/{original_filename}', f'/home/farouq/Documents/Notes/PROGRAMMING LIFE/{filename}')
             elif original_filename in others_file_list:
-                os.rename(f'C:/Users/Farouq/Documents/Notes/OTHER/{original_filename}', f'C:/Users/Farouq/Documents/Notes/OTHER/{filename}')
+                os.rename(f'/home/farouq/Documents/Notes/OTHER/{original_filename}', f'/home/farouq/Documents/Notes/OTHER/{filename}')
             
             
         if category == "Academia":
-            with open(f'C:/Users/Farouq/Documents/Notes/ACADEMIA/{filename}', 'w') as file:
+            with open(f'/home/farouq/Documents/Notes/ACADEMIA/{filename}', 'w') as file:
                 for note in notes:
                     file.write(note.rstrip('\n'))
         elif category == "Programming Life":
-            with open(f'C:/Users/Farouq/Documents/Notes/PROGRAMMING LIFE/{filename}', 'w') as file:
+            with open(f'/home/farouq/Documents/Notes/PROGRAMMING LIFE/{filename}', 'w') as file:
                 for note in notes:
                     file.write(note.rstrip('\n'))
         elif category == "Other":
-            with open(f'C:/Users/Farouq/Documents/Notes/OTHER/{filename}', 'w') as file:
+            with open(f'/home/farouq/Documents/Notes/OTHER/{filename}', 'w') as file:
                 for note in notes:
                     file.write(note.rstrip('\n'))
                     
@@ -104,7 +104,7 @@ def save(request):
 
 # def open(request, file_name):
 #     context = {}
-#     with open(f'C:/Users/Farouq/Documents/Notes/{file_name}', 'r') as file_opened:
+#     with open(f'/home/farouq/Documents/Notes/{file_name}', 'r') as file_opened:
 #             notes = file_opened.readlines()
 #             context['notes'] = notes
 #             context['file_list'] = file_list
