@@ -1,7 +1,7 @@
 import math
 
 
-def farsan_encrypt(strin:str):
+def farsan_encrypt(strin: str):
     '''Encrypts a given string'''
     string = strin[::-1]
     row = math.floor(len(string)**0.5)
@@ -31,7 +31,7 @@ def farsan_encrypt(strin:str):
     return ''.join(coded)
 
 
-def farsan_decrypt(strin:str):
+def farsan_decrypt(strin: str):
     '''Decrypts a string based on the `Farsan` encryption method.'''
     string = strin
     decoded = []
@@ -68,6 +68,25 @@ def farsan_decrypt(strin:str):
                 decoded.append(j[i])
 
     return ''.join(decoded)[::-1]
+
+
+# n = 0
+# e = "abcde"
+# ee = farsan_encrypt(e)
+
+# def determine(string, original, i):
+#     if farsan_encrypt(string) == original:
+#         return i
+#     return determine(farsan_encrypt(string), original, i+1)
+
+# print(determine(e, e, 1))
+
+
+# while ee != e:
+#     ee = farsan_encrypt(ee)
+#     n += 1
+#     print(ee)
+# print(n)
 
 
 # string = input("Enter a string for testing: ")
