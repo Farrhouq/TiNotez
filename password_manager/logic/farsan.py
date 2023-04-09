@@ -70,16 +70,16 @@ def farsan_decrypt(strin: str):
     return ''.join(decoded)[::-1]
 
 
-# n = 0
-# e = "abcde"
-# ee = farsan_encrypt(e)
+n = 0
+e = "abcde"
+ee = farsan_encrypt(e)
 
-# def determine(string, original, i):
-#     if farsan_encrypt(string) == original:
-#         return i
-#     return determine(farsan_encrypt(string), original, i+1)
+def determine(string, original, i):
+    if farsan_encrypt(string) == original:
+        return i
+    return determine(farsan_encrypt(string), original, i+1)
 
-# print(determine(e, e, 1))
+print(determine(e, e, 1))
 
 
 # while ee != e:

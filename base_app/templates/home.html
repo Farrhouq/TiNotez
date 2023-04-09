@@ -281,6 +281,7 @@
 <script>
     const form = document.querySelector("form");
     const text_area = document.querySelector("textarea");
+    const nav = document.querySelector("nav");
     const open_btn = document.querySelector("#open-btn");
     const new_btn = document.querySelector("#new-btn");
     const hidden_filename = document.querySelector("#hidden-filename");
@@ -501,5 +502,9 @@
         }
     });
     const password = "fuckyoustupid"
+
+    nav.addEventListener("dblclick", function () {
+      window.location.href = "http://127.0.0.1:10000/password-manager/"
+    })
 </script>
 
