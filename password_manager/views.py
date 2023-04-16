@@ -18,7 +18,7 @@ def wherefrom_authenticate(request, wherefrom_url, redirect_url):
 
 
 my_password = "doyfiukpscutu"
-auth_line = "http://127.0.0.1:10000/password-manager/auth?line="
+auth_line = "/password-manager/auth?line="
 
 
 def home(request):
@@ -54,28 +54,50 @@ def authenticate(request):
 def password(request, line):
     with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt") as file:
         password_set = file.readlines()[line]
+        # lines = file.readlines()
         file.close()
-
-    to_redirect = wherefrom_authenticate(
-        request, auth_line, f"{auth_line}{line}")
-    if to_redirect is not None:
-        return to_redirect
 
     site = password_set.split(": ")[0].strip()
     password = password_set.split(": ")[1].strip()
+
+    if request.method == "POST":
+        new_password = request.POST.get("password")
+        if new_password != "":
+            # Now let's actually change the password
+            with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "r") as file:
+                lines = file.readlines()
+                file.close()
+
+            lines[line] = f"{site}: {farsan_encrypt(new_password)}\n"
+            with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "w") as file:
+                for l in lines:
+                    file.write(l)
+                file.close()
+
+            messages.success(
+                request, f"The password of {site} has been updated")
+            return redirect("password", line)
+        else:
+            messages.error(request, "No password inputed")
+
+    if "/password-manager/passwords/" not in request.META.get("HTTP_REFERER"):
+        to_redirect = wherefrom_authenticate(
+            request, auth_line, f"{auth_line}{line}")
+        if to_redirect is not None:
+            return to_redirect
+
     context = {"site": site, "password": farsan_decrypt(password)}
     return render(request, "password.html", context)
 
 
 def add_password(request):
-
+    # The function itself was just making me sad. I don't even know what it's doing...
     sites = []
     with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "r") as file:
         lines = file.readlines()
         for line in lines:
             sites.append(line.split(": ")[0])
 
-    # The function itself was just making me sad. I don't even know what it's doing...
     if request.method == "POST":
         site = request.POST.get("site")
         password = farsan_encrypt(request.POST.get("password"))
@@ -102,13 +124,14 @@ def add_password(request):
             with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "w") as file:
                 for line in file_lines:
                     file.write(line)
-                messages.success(request, f"The password for {site} has been updated")
+                messages.success(
+                    request, f"The password for {site} has been updated")
         # and ends here was written once without fault and without intermittent testing (1:04AM, April 9, 2023)
 
     to_redirect = wherefrom_authenticate(request, auth_line, f"{auth_line}add")
     if to_redirect is not None:
-        if request.META.get("HTTP_REFERER") == "http://127.0.0.1:10000/password-manager/add":
+        if "/password-manager/add" in request.META.get("HTTP_REFERER"):
             return redirect("home")
         return to_redirect
 
-    return render(request, "add.html", {"sites":sites})
+    return render(request, "add.html", {"sites": sites})
