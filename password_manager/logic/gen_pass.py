@@ -1,8 +1,8 @@
 import random
-from . import shuffle
+from .shuffle import shuffle
 
 
-def gen_pass(no, site):
+def gen_pass(no):
     letters = 'abcdefghijklmnopqrstuvwxyz'
     numbers = '1234567890'
     special = '!@#$%^&*'

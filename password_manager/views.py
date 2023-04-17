@@ -14,20 +14,18 @@ def wherefrom_authenticate(request, wherefrom_url, redirect_url):
     if wherefrom_url not in wherefrom:
         return redirect(redirect_url)
 
-# Create your views here.
-
 
 my_password = "doyfiukpscutu"
 auth_line = "/password-manager/auth?line="
+
+# Create your views here.
 
 
 def home(request):
     with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt") as file:
         password_sets = file.readlines()
         file.close()
-
     password_dict = {}
-
     for set in password_sets:
         site = set.split(":")[0]
         password = set.split(": ")[1].strip()
@@ -54,7 +52,6 @@ def authenticate(request):
 def password(request, line):
     with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt") as file:
         password_set = file.readlines()[line]
-        # lines = file.readlines()
         file.close()
 
     site = password_set.split(": ")[0].strip()
@@ -62,23 +59,25 @@ def password(request, line):
 
     if request.method == "POST":
         new_password = request.POST.get("password")
-        if new_password != "":
-            # Now let's actually change the password
-            with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "r") as file:
-                lines = file.readlines()
-                file.close()
+        confirm = request.POST.get("confirm")
+        if confirm == "on":
+            if new_password != "":
+                # Now let's actually change the password
+                with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "r") as file:
+                    lines = file.readlines()
+                    file.close()
 
-            lines[line] = f"{site}: {farsan_encrypt(new_password)}\n"
-            with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "w") as file:
-                for l in lines:
-                    file.write(l)
-                file.close()
+                lines[line] = f"{site}: {farsan_encrypt(new_password)}\n"
+                with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "w") as file:
+                    for l in lines:
+                        file.write(l)
+                    file.close()
 
-            messages.success(
-                request, f"The password of {site} has been updated")
-            return redirect("password", line)
-        else:
-            messages.error(request, "No password inputed")
+                messages.success(
+                    request, f"Password updated")
+                return redirect("password", line)
+            else:
+                messages.error(request, "No password inputed")
 
     if "/password-manager/passwords/" not in request.META.get("HTTP_REFERER"):
         to_redirect = wherefrom_authenticate(
@@ -95,8 +94,9 @@ def add_password(request):
     sites = []
     with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "r") as file:
         lines = file.readlines()
-        for line in lines:
-            sites.append(line.split(": ")[0])
+        file.close()
+    for line in lines:
+        sites.append(line.split(": ")[0])
 
     if request.method == "POST":
         site = request.POST.get("site")
@@ -135,3 +135,74 @@ def add_password(request):
         return to_redirect
 
     return render(request, "add.html", {"sites": sites})
+
+
+def generate_password(request):
+    password = None
+
+    sites = []
+    with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "r") as file:
+        lines = file.readlines()
+        file.close()
+    for line in lines:
+        sites.append(line.split(": ")[0])
+    context = {"sites": sites}
+    if request.method == "POST":
+        site = request.POST.get("site")
+        length = int(request.POST.get("length"))
+        password = gen_pass(length)
+        context["password"] = password
+        context["length"] = length
+        context["site"] = site
+    return render(request, "generate.html", context)
+
+
+def save(request):
+    if request.method != "POST":
+        if request.META.get("HTTP_REFERER") is None:
+            return redirect('home')
+        return redirect(request.META.get("HTTP_REFERER"))
+
+    site = request.POST.get("site")
+    print("The site is", site)
+    save_password = request.POST.get("save-password")
+    passcode = request.POST.get("password")
+
+    sites = []
+    if passcode == farsan_decrypt(my_password):
+        # Let's save the password, give a message, and redirect me.
+        # First of all, let's check for replacements
+        replacement = False
+        with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "a+") as file:
+            file.seek(0)
+            lines = file.readlines()
+            for line in lines:
+                sites.append(line.split(": ")[0])
+
+            print(sites)
+            print(lines)
+            print("site in sites", site in sites)
+            if site in sites:
+                line_found = sites.index(site)
+                replacement = True
+            else:
+                file.write(f"{site}: {farsan_encrypt(save_password)}\n")
+                messages.success(
+                    request, f"Your password for {site} has been saved successfully")
+                return redirect("home")
+            file.close()
+
+        if replacement:
+            lines[line_found] = f"{site}: {farsan_encrypt(save_password)}\n"
+            with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "w") as file:
+                for l in lines:
+                    file.write(l)
+            messages.success(
+                request, f"Your password for {site} has been updated")
+            return redirect("home")
+    else:
+        if "/password-manager/save" in request.META.get("HTTP_REFERER"):
+            messages.error(request, "Wrong Password!")
+
+    context = {"site": site, "save_password": save_password, "page": "save"}
+    return render(request, "auth.html", context)

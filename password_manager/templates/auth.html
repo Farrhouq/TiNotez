@@ -68,6 +68,10 @@
           </ul>
         {% endif %}
         <input type="submit" value="Submit" class="btn" />
+        {% if page == 'save'%}
+        <input type="hidden" name="site" value="{{site}}">
+        <input type="hidden" name="save-password" value="{{save_password}}">
+        {% endif %}
       </form>
     </div>
   </body>
