@@ -151,9 +151,7 @@ def generate_password(request):
         site = request.POST.get("site")
         length = int(request.POST.get("length"))
         password = gen_pass(length)
-        context["password"] = password
-        context["length"] = length
-        context["site"] = site
+        context.update({"password": password, "length": length, "site": site})
     return render(request, "generate.html", context)
 
 
@@ -164,7 +162,6 @@ def save(request):
         return redirect(request.META.get("HTTP_REFERER"))
 
     site = request.POST.get("site")
-    print("The site is", site)
     save_password = request.POST.get("save-password")
     passcode = request.POST.get("password")
 
@@ -179,9 +176,6 @@ def save(request):
             for line in lines:
                 sites.append(line.split(": ")[0])
 
-            print(sites)
-            print(lines)
-            print("site in sites", site in sites)
             if site in sites:
                 line_found = sites.index(site)
                 replacement = True
@@ -189,7 +183,7 @@ def save(request):
                 file.write(f"{site}: {farsan_encrypt(save_password)}\n")
                 messages.success(
                     request, f"Your password for {site} has been saved successfully")
-                return redirect("home")
+                return redirect("password", line)
             file.close()
 
         if replacement:
@@ -201,6 +195,7 @@ def save(request):
                 request, f"Your password for {site} has been updated")
             return redirect("home")
     else:
+        # Let's check if the person is from 'save' which will mean that the person just entered a wrong password
         if "/password-manager/save" in request.META.get("HTTP_REFERER"):
             messages.error(request, "Wrong Password!")
 
