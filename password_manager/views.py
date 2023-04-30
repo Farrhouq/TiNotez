@@ -1,23 +1,25 @@
-# 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
 from django.shortcuts import render, redirect
-import random
-from password_manager.logic.shuffle import shuffle
+from django.contrib import messages
+from github import Github
+
 from password_manager.logic.gen_pass import gen_pass
 from password_manager.logic.farsan import farsan_encrypt, farsan_decrypt
-from django.contrib import messages
-import json
+
+
+my_password = "doyfiukpscutu"
+auth_line = "/password-manager/auth?line="
+gist_id = farsan_decrypt("2a89342090ab8819e5c5f05fc799bc6a")
+g = Github(farsan_decrypt(
+    "IqcOc_wA1gKmUiT8dY1iWrCUuHcF_tPobh6HZCtxEG0kKxKavRb2vYmBp3YmzZ80A_bFpah8A0bMDA1TKGhuZMwfsyzhh"))
+gist = g.get_gist(gist_id)
 
 
 def wherefrom_authenticate(request, wherefrom_url, redirect_url):
     wherefrom = request.META.get("HTTP_REFERER") if request.META.get(
         "HTTP_REFERER") is not None else ""
-
     if wherefrom_url not in wherefrom:
         return redirect(redirect_url)
 
-
-my_password = "doyfiukpscutu"
-auth_line = "/password-manager/auth?line="
 
 # Create your views here.
 
@@ -31,7 +33,6 @@ def home(request):
         site = set.split(":")[0]
         password = set.split(": ")[1].strip()
         password_dict[site] = len(password)*'*'
-
     context = {"passwords": password_dict}
     return render(request, "passwords.html", context)
 
@@ -67,13 +68,11 @@ def password(request, line):
                 with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "r") as file:
                     lines = file.readlines()
                     file.close()
-
                 lines[line] = f"{site}: {farsan_encrypt(new_password)}\n"
                 with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "w") as file:
                     for l in lines:
                         file.write(l)
                     file.close()
-
                 messages.success(
                     request, f"Password updated")
                 return redirect("password", line)
@@ -134,13 +133,11 @@ def add_password(request):
         if "/password-manager/add" in request.META.get("HTTP_REFERER"):
             return redirect("home")
         return to_redirect
-
     return render(request, "add.html", {"sites": sites})
 
 
 def generate_password(request):
     password = None
-
     sites = []
     with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "r") as file:
         lines = file.readlines()
@@ -176,7 +173,6 @@ def save(request):
             lines = file.readlines()
             for line in lines:
                 sites.append(line.split(": ")[0])
-
             if site in sites:
                 line_found = sites.index(site)
                 replacement = True
@@ -196,9 +192,17 @@ def save(request):
                 request, f"Your password for {site} has been updated")
             return redirect("home")
     else:
-        # Let's check if the person is from 'save' which will mean that the person just entered a wrong password
+        # Let's check if the person is from 'save' which will mean that
+        # the person just entered a wrong password
         if "/password-manager/save" in request.META.get("HTTP_REFERER"):
             messages.error(request, "Wrong Password!")
-
     context = {"site": site, "save_password": save_password, "page": "save"}
     return render(request, "auth.html", context)
+
+
+
+# Reading
+content = gist.files[gist_id].content
+
+# Writing
+gist.edit(files={gist_id: Github.GithubInputFileContent("new content")})

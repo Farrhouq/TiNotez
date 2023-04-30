@@ -27,7 +27,6 @@ def farsan_encrypt(strin: str):
             if len(j) > (i):
                 coded.append(j[i])
                 line.append(j[i])
-
     return ''.join(coded)
 
 
@@ -53,9 +52,7 @@ def farsan_decrypt(strin: str):
         hang += 1
 
     i = 0
-    reved = True
     hang = 0
-
     reved = True
     for i in range(len(rows[0])):
         reved = not reved
@@ -66,28 +63,25 @@ def farsan_decrypt(strin: str):
         for j in c:
             if len(j) > i:
                 decoded.append(j[i])
-
     return ''.join(decoded)[::-1]
 
 
-n = 0
-e = "abcde"
-ee = farsan_encrypt(e)
 
 def determine(string, original, i):
+    '''
+    This determines the minimum number of times you can encrypt a string 
+    to bring it back to its original form
+    '''
     if farsan_encrypt(string) == original:
         return i
     return determine(farsan_encrypt(string), original, i+1)
 
-print(determine(e, e, 1))
-
-
-# while ee != e:
-#     ee = farsan_encrypt(ee)
-#     n += 1
-#     print(ee)
-# print(n)
-
+# n = 0
+# e = "abcde"
+# ee = farsan_encrypt(e)
+# print(determine(e, e, 1))
+# https://gist.github.com/Farrhouq/4ba90ea3909f76cc5198a08cfb955822
+print(farsan_encrypt("4ba90ea3909f76cc5198a08cfb955822"))
 
 # string = input("Enter a string for testing: ")
 # print(f'The string is "{string}"')
