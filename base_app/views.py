@@ -60,7 +60,7 @@ def home(request):
                     'file_list':file_list, 
                     'academia_file_list':academia_file_list,
                     'programming_life_file_list':programming_life_file_list, 
-                    'others_file_list':others_file_list})
+                    'others_file_list':others_file_list,})
     return render(request, 'home.html', context)
         
 
@@ -81,32 +81,8 @@ def save(request):
             elif original_filename in others_file_list:
                 os.rename(f'/home/farouq/Documents/Notes/OTHER/{original_filename}', f'/home/farouq/Documents/Notes/OTHER/{filename}')
             
-            
-        if category == "Academia":
-            with open(f'/home/farouq/Documents/Notes/ACADEMIA/{filename}', 'w') as file:
-                for note in notes:
-                    file.write(note.rstrip('\n'))
-        elif category == "Programming Life":
-            with open(f'/home/farouq/Documents/Notes/PROGRAMMING LIFE/{filename}', 'w') as file:
-                for note in notes:
-                    file.write(note.rstrip('\n'))
-        elif category == "Other":
-            with open(f'/home/farouq/Documents/Notes/OTHER/{filename}', 'w') as file:
-                for note in notes:
-                    file.write(note.rstrip('\n'))
-                    
-                
-                
+        if category is not None:
+            with open(f'/home/farouq/Documents/Notes/{category.upper()}/{filename}', 'w') as file:
+                    for note in notes:
+                        file.write(note.rstrip('\n'))
     return redirect(f'/?file={filename}')
-
-    # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-
-
-# def open(request, file_name):
-#     context = {}
-#     with open(f'/home/farouq/Documents/Notes/{file_name}', 'r') as file_opened:
-#             notes = file_opened.readlines()
-#             context['notes'] = notes
-#             context['file_list'] = file_list
-
-#     return render(request, 'home.html', context)

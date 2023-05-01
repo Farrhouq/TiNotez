@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from github import Github
+from github import Github, InputFileContent
 
 from password_manager.logic.gen_pass import gen_pass
 from password_manager.logic.farsan import farsan_encrypt, farsan_decrypt
@@ -9,9 +9,20 @@ from password_manager.logic.farsan import farsan_encrypt, farsan_decrypt
 my_password = "doyfiukpscutu"
 auth_line = "/password-manager/auth?line="
 gist_id = farsan_decrypt("2a89342090ab8819e5c5f05fc799bc6a")
-g = Github(farsan_decrypt(
-    "IqcOc_wA1gKmUiT8dY1iWrCUuHcF_tPobh6HZCtxEG0kKxKavRb2vYmBp3YmzZ80A_bFpah8A0bMDA1TKGhuZMwfsyzhh"))
-gist = g.get_gist(gist_id)
+
+# g = Github(farsan_decrypt(
+#         "IqcOc_wA1gKmUiT8dY1iWrCUuHcF_tPobh6HZCtxEG0kKxKavRb2vYmBp3YmzZ80A_bFpah8A0bMDA1TKGhuZMwfsyzhh"))
+# gist = g.get_gist(gist_id)
+
+def gg():
+    '''Resets and reinstantiates the Github classes and gist to make sure it's always up to date '''
+    global g, gist
+    g = Github(farsan_decrypt(
+        "IqcOc_wA1gKmUiT8dY1iWrCUuHcF_tPobh6HZCtxEG0kKxKavRb2vYmBp3YmzZ80A_bFpah8A0bMDA1TKGhuZMwfsyzhh"))
+    gist = g.get_gist(gist_id)
+
+
+gg()
 
 
 def wherefrom_authenticate(request, wherefrom_url, redirect_url):
@@ -25,9 +36,12 @@ def wherefrom_authenticate(request, wherefrom_url, redirect_url):
 
 
 def home(request):
-    with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt") as file:
-        password_sets = file.readlines()
-        file.close()
+    # with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt") as file:
+    #     password_sets = file.readlines()
+    #     file.close()
+    gg()
+    password_sets = gist.files["haash.txt"].content.split("\n")
+
     password_dict = {}
     for set in password_sets:
         site = set.split(":")[0]
@@ -43,19 +57,21 @@ def authenticate(request):
         password = request.POST.get("password")
         if password == farsan_decrypt(my_password):
             if line.isnumeric():
-                return redirect("password", line)
+                return redirect("password_manager:password", line)
             elif line == 'add':
-                return redirect('add')
+                return redirect('password_manager:add')
         else:
             messages.error(request, "Wrong Password!")
     return render(request, "auth.html", {})
 
 
 def password(request, line):
-    with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt") as file:
-        password_set = file.readlines()[line]
-        file.close()
+    # with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt") as file:
+    #     password_set = file.readlines()[line]
+    #     file.close()
 
+    gg()
+    password_set = gist.files["haash.txt"].content.split("\n")[line]
     site = password_set.split(": ")[0].strip()
     password = password_set.split(": ")[1].strip()
 
@@ -65,17 +81,21 @@ def password(request, line):
         if confirm == "on":
             if new_password != "":
                 # Now let's actually change the password
-                with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "r") as file:
-                    lines = file.readlines()
-                    file.close()
+                # with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "r") as file:
+                #     lines = file.readlines()
+                #     file.close()
+                gg()
+                lines = gist.files["haash.txt"].content.split("\n")
+                
                 lines[line] = f"{site}: {farsan_encrypt(new_password)}\n"
-                with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "w") as file:
-                    for l in lines:
-                        file.write(l)
-                    file.close()
+                # with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "w") as file:
+                #     for l in lines:
+                #         file.write(l)
+                #     file.close()
+                gist.edit(files={gist_id: InputFileContent('\n'.join(line))})
                 messages.success(
                     request, f"Password updated")
-                return redirect("password", line)
+                return redirect("password_manager:password", line)
             else:
                 messages.error(request, "No password inputed")
 
@@ -92,9 +112,11 @@ def password(request, line):
 def add_password(request):
     # The function itself was just making me sad. I don't even know what it's doing...
     sites = []
-    with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "r") as file:
-        lines = file.readlines()
-        file.close()
+    # with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "r") as file:
+    #     lines = file.readlines()
+    #     file.closgg()
+    # e()
+    lines = gist.files["haash.txt"].content.split("\n")
     for line in lines:
         sites.append(line.split(": ")[0])
 
@@ -104,34 +126,40 @@ def add_password(request):
 
         # Important: The code starting from here...
         index_found = None
-        with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "r") as file:
+        # with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "r") as file:
             # I think this part is just like the terminal version...
-            file_lines = file.readlines()
-            for line in file_lines:
-                if site == line.split(': ')[0]:
-                    index_found = file_lines.index(line)
-                    file_lines[index_found] = f"{site}: {password}\n"
-                    file.close()
-                    break
+            # file_lines = file.readlines()
+        gg()
+        file_lines = gist.files["haash.txt"].content.split("\n")
+        for line in file_lines:
+            if site == line.split(': ')[0]:
+                index_found = file_lines.index(line)
+                file_lines[index_found] = f"{site}: {password}\n"
+                # file.close()
+                break
 
         if index_found is None:
-            with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "a") as file:
-                file.write(f"{site}: {password}\n")
-                messages.success(
-                    request, f"The password for {site} has been saved successfully")
-                file.close()
+            lines = gist.files["haash.txt"].content.split("\n")
+            lines.append(f"{site}: {password}\n")
+            gist.edit(files={"haash.txt": InputFileContent("".join(lines))})
+            # with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "a") as file:
+            #     file.write(f"{site}: {password}\n")
+            messages.success(
+                request, f"The password for {site} has been saved successfully")
+                # file.close()
         else:
-            with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "w") as file:
-                for line in file_lines:
-                    file.write(line)
-                messages.success(
-                    request, f"The password for {site} has been updated")
+            # with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "w") as file:
+            #     for line in file_lines:
+            #         file.write(line)
+            gist.edit(files={"haash.txt": InputFileContent("".join(file_lines))})
+            messages.success(
+                request, f"The password for {site} has been updated")
         # and ends here was written once without fault and without intermittent testing (1:04AM, April 9, 2023)
 
     to_redirect = wherefrom_authenticate(request, auth_line, f"{auth_line}add")
     if to_redirect is not None:
         if "/password-manager/add" in request.META.get("HTTP_REFERER"):
-            return redirect("home")
+            return redirect("password_manager:home")
         return to_redirect
     return render(request, "add.html", {"sites": sites})
 
@@ -139,9 +167,11 @@ def add_password(request):
 def generate_password(request):
     password = None
     sites = []
-    with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "r") as file:
-        lines = file.readlines()
-        file.close()
+    # with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "r") as file:
+    #     lines = file.readlines()
+    #     file.closgg()
+    # e()
+    lines = gist.files["haash.txt"].content.split("\n")
     for line in lines:
         sites.append(line.split(": ")[0])
     context = {"sites": sites}
@@ -156,7 +186,7 @@ def generate_password(request):
 def save(request):
     if request.method != "POST":
         if request.META.get("HTTP_REFERER") is None:
-            return redirect('home')
+            return redirect('password_manager:home')
         return redirect(request.META.get("HTTP_REFERER"))
 
     site = request.POST.get("site")
@@ -168,29 +198,36 @@ def save(request):
         # Let's save the password, give a message, and redirect me.
         # First of all, let's check for replacements
         replacement = False
-        with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "a+") as file:
-            file.seek(0)
-            lines = file.readlines()
-            for line in lines:
-                sites.append(line.split(": ")[0])
-            if site in sites:
-                line_found = sites.index(site)
-                replacement = True
-            else:
-                file.write(f"{site}: {farsan_encrypt(save_password)}\n")
-                messages.success(
-                    request, f"Your password for {site} has been saved successfully")
-                return redirect("password", line)
-            file.close()
+        # with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "a+") as file:
+        # file.seek(0)
+        # lines = file.readlines()
+        gg()
+        lines = gist.files["haash.txt"].content.split("\n")
+        for line in lines:
+            sites.append(line.split(": ")[0])
+        if site in sites:
+            line_found = sites.index(site)
+            replacement = True
+        else:
+            gg()
+            lines = gist.files["haash.txt"].content.split("\n")
+            lines.append(f"{site}: {farsan_encrypt(save_password)}\n")
+            # file.write(f"{site}: {farsan_encrypt(save_password)}\n")
+            gist.edit(files={"haash.txt": InputFileContent("".join(lines))})
+            messages.success(
+                request, f"Your password for {site} has been saved successfully")
+            return redirect("password_manager:password", line)
+            # file.close()
 
         if replacement:
             lines[line_found] = f"{site}: {farsan_encrypt(save_password)}\n"
-            with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "w") as file:
-                for l in lines:
-                    file.write(l)
+            # with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "w") as file:
+            #     for l in lines:
+            #         file.write(l)
+            gist.edit(files={"haash.txt": InputFileContent("".join(lines))})
             messages.success(
                 request, f"Your password for {site} has been updated")
-            return redirect("home")
+            return redirect("password_manager:home")
     else:
         # Let's check if the person is from 'save' which will mean that
         # the person just entered a wrong password
@@ -202,7 +239,7 @@ def save(request):
 
 
 # Reading
-content = gist.files[gist_id].content
+# content = gist.files[gist_id].content
 
 # Writing
-gist.edit(files={gist_id: Github.GithubInputFileContent("new content")})
+# gist.edit(files={gist_id: InputFileContent("new content")})

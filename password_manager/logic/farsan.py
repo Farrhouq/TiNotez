@@ -81,7 +81,6 @@ def determine(string, original, i):
 # ee = farsan_encrypt(e)
 # print(determine(e, e, 1))
 # https://gist.github.com/Farrhouq/4ba90ea3909f76cc5198a08cfb955822
-print(farsan_encrypt("4ba90ea3909f76cc5198a08cfb955822"))
 
 # string = input("Enter a string for testing: ")
 # print(f'The string is "{string}"')
