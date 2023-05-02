@@ -77,24 +77,7 @@ def determine(string, original, i):
     return determine(farsan_encrypt(string), original, i+1)
 
 
-def process(string:str):
-    '''You won't understand. It's meant for you not to. Yeah, you.'''
-    def position_of(letter):
-        lc = [le for le in "abcdefghijklmnopqrstuvwxyz"]
-        return lc.index(letter)+1
-    
-    global gist_id
-    i = "2a89342090ab8219e5d5f05fd799bd6a"
-    if len(string) >= 13:
-        s = farsan_decrypt(string)
-        i_ = [char for char in i]
-        for t in range(len(i_)):
-            if i_[t] == string[12]:
-                i_[t] = string[2]
 
-        t2 = position_of(string[7]) - position_of(string[0])
-        i_[t2] = position_of(string[6]) - t2
-        gist_id = ''.join([str(i) for i in i_])
     
 # f:6
 # k:11 
@@ -109,7 +92,7 @@ def process(string:str):
 
         
     
-print(process("fuckyoustupid"))
+# print(process("fuckyoustupid"))
 
 
 # n = 0
