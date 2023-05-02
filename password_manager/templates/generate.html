@@ -257,7 +257,7 @@
 
   saveBtn.addEventListener("click", function () {
     event.preventDefault();
-    form.action = "{% url 'save' %}";
+    form.action = "{% url 'password_manager:save' %}";
     savePassword.value = password.innerText;
   });
   saveBtn.addEventListener("click", submitForm);

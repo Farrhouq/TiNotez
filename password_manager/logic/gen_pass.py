@@ -5,7 +5,7 @@ from .shuffle import shuffle
 def gen_pass(no):
     letters = 'abcdefghijklmnopqrstuvwxyz'
     numbers = '1234567890'
-    special = '!@#$%^&*'
+    special = '!@#$%^&*{}|\/<>~?;=()[+_-]'
     lu = [upper for upper in letters.upper()]
     ll = [g for g in letters.lower()]
     nn = [t for t in numbers]
