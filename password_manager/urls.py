@@ -6,6 +6,7 @@ app_name = "password_manager"
 urlpatterns = [
     path('', views.home, name='home'),
     path('auth', views.authenticate, name="authenticate"),
+    path('pass', views.auth, name='auth'),
     path('add', views.add_password, name='add'),
     path('generate', views.generate_password, name='generate'),
     path('save', views.save, name='save'),

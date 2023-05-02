@@ -3,26 +3,35 @@ from django.contrib import messages
 from github import Github, InputFileContent
 
 from password_manager.logic.gen_pass import gen_pass
-from password_manager.logic.farsan import farsan_encrypt, farsan_decrypt
+from password_manager.logic.farsan import farsan_encrypt, farsan_decrypt, process
 
 
 my_password = "doyfiukpscutu"
 auth_line = "/password-manager/auth?line="
-gist_id = farsan_decrypt("2a89342090ab8819e5c5f05fc799bc6a")
+# gist_id = farsan_decrypt("2a89342090ab8819e5c5f05fc799bc6a")
+gist_id = "78hf7898wjhfnihjgh21"
 
-# g = Github(farsan_decrypt(
-#         "IqcOc_wA1gKmUiT8dY1iWrCUuHcF_tPobh6HZCtxEG0kKxKavRb2vYmBp3YmzZ80A_bFpah8A0bMDA1TKGhuZMwfsyzhh"))
-# gist = g.get_gist(gist_id)
 
 def gg():
-    '''Resets and reinstantiates the Github classes and gist to make sure it's always up to date '''
+    '''Reinstantiates and resets the Github class and gist to make sure it's always up to date '''
     global g, gist
     g = Github(farsan_decrypt(
         "IqcOc_wA1gKmUiT8dY1iWrCUuHcF_tPobh6HZCtxEG0kKxKavRb2vYmBp3YmzZ80A_bFpah8A0bMDA1TKGhuZMwfsyzhh"))
     gist = g.get_gist(gist_id)
 
 
-gg()
+def tgg():
+    try:
+        gg()
+    except:
+        return redirect("password_manager:auth")
+
+def auth(request):
+    password  = request.POST.get("password")
+    process(password)
+    tgg()
+    return render(request, 'authe.html', {})
+    
 
 
 def wherefrom_authenticate(request, wherefrom_url, redirect_url):
@@ -39,7 +48,8 @@ def home(request):
     # with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt") as file:
     #     password_sets = file.readlines()
     #     file.close()
-    gg()
+    
+    tgg()
     password_sets = gist.files["haash.txt"].content.split("\n")
 
     password_dict = {}
@@ -70,7 +80,7 @@ def password(request, line):
     #     password_set = file.readlines()[line]
     #     file.close()
 
-    gg()
+    tgg()
     password_set = gist.files["haash.txt"].content.split("\n")[line]
     site = password_set.split(": ")[0].strip()
     password = password_set.split(": ")[1].strip()
@@ -84,7 +94,7 @@ def password(request, line):
                 # with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "r") as file:
                 #     lines = file.readlines()
                 #     file.close()
-                gg()
+                tgg()
                 lines = gist.files["haash.txt"].content.split("\n")
                 
                 lines[line] = f"{site}: {farsan_encrypt(new_password)}\n"
@@ -129,7 +139,7 @@ def add_password(request):
         # with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "r") as file:
             # I think this part is just like the terminal version...
             # file_lines = file.readlines()
-        gg()
+        tgg()
         file_lines = gist.files["haash.txt"].content.split("\n")
         for line in file_lines:
             if site == line.split(': ')[0]:
@@ -201,7 +211,7 @@ def save(request):
         # with open("/home/farouq/PycharmProjects/pythonProject2/haash.txt", "a+") as file:
         # file.seek(0)
         # lines = file.readlines()
-        gg()
+        tgg()
         lines = gist.files["haash.txt"].content.split("\n")
         for line in lines:
             sites.append(line.split(": ")[0])
@@ -209,7 +219,7 @@ def save(request):
             line_found = sites.index(site)
             replacement = True
         else:
-            gg()
+            tgg()
             lines = gist.files["haash.txt"].content.split("\n")
             lines.append(f"{site}: {farsan_encrypt(save_password)}\n")
             # file.write(f"{site}: {farsan_encrypt(save_password)}\n")
