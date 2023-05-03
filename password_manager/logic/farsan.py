@@ -4,7 +4,6 @@ import math
 def farsan_encrypt(strin: str):
     '''Encrypts a given string'''
     string = strin[::-1]
-    row = math.floor(len(string)**0.5)
     column = math.ceil(len(string)**0.5)
 
     rows = []
