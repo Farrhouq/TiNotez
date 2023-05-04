@@ -220,7 +220,7 @@
               <button class="fore-button" id="">ACADEMIA &LongRightArrow;</button>
               <ul class="dropdown-menu" style="width: 100%">
                 {% for filename in academia_file_list %}
-                  <a style="font-size: 1.2em" href="{% url 'base_app:home' %}?file={{filename}}">
+                  <a style="font-size: 1.2em" href="{% url 'home' %}?file={{filename}}">
                     <li>{{filename}}</li>
                   </a>
                 {% endfor %}
@@ -233,7 +233,7 @@
               <button class="fore-button" id="">PROGRAMMING LIFE &LongRightArrow;</button>
               <ul class="dropdown-menu" style="width: 100%">
                 {% for filename in programming_life_file_list %}
-                  <a style="font-size: 1.2em" href="{% url 'base_app:home' %}?file={{filename}}">
+                  <a style="font-size: 1.2em" href="{% url 'home' %}?file={{filename}}">
                     <li>{{filename}}</li>
                   </a>
                 {% endfor %}
@@ -246,7 +246,7 @@
               <button class="fore-button" id="">OTHER &LongRightArrow;</button>
               <ul class="dropdown-menu" style="width: 100%">
                 {% for filename in others_file_list %}
-                  <a onclick="authenticate(this)" style="font-size: 1.2em" href="{% url 'base_app:home' %}?file={{filename}}">
+                  <a onclick="authenticate(this)" style="font-size: 1.2em" href="{% url 'home' %}?file={{filename}}">
                     <li>{{filename}}</li>
                   </a>
                   {% endfor %}
@@ -268,7 +268,7 @@
       </div>
       
     </nav>
-    <form id="my-form" action="{% url 'base_app:save' %}" method="POST">
+    <form id="my-form" action="{% url 'save' %}" method="POST">
       {% csrf_token %}
       <textarea name="notes">{%for note in notes %}{{note}}{% endfor %}</textarea>
       <input id="hidden-filename" name="hidden-filename" type="hidden" />
