@@ -1,10 +1,13 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 import os
+import platform
 
 
 CATEGORIES = ["ACADEMIA", "PROGRAMMING LIFE", "OTHER"]
-ROOT_DIR = "/home/farouq/Documents/Notes"
+ROOT_DIR = "C:\\Users\\Farouq\\Documents\\Notes"
+if platform.system() == "Linux":
+    ROOT_DIR = "/home/farouq/Documents/Notes"
 directories = [os.fsencode(f"{ROOT_DIR}/{d}") for d in CATEGORIES]
 
 
@@ -20,8 +23,6 @@ def get_files():
             filename = os.fsdecode(file)
             if filename.endswith(".txt"):
                 file_list_list[directories.index(directory)].append(filename)
-
-    academia_file_list, programming_life_file_list, others_file_list = file_list_list
 
 
 get_files()
