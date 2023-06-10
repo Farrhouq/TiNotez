@@ -1,0 +1,25 @@
+so right now...
+I'm planning to make this thing usable by other people. And with the least effort possible in setting up.
+What I'm planning to do is
+First, I'll try to get the files the normal way, then add an except block in the get_files function.
+If that exception, then the user is redirected to a place where they can set up the folder names. 
+
+So I should make sure that the user gets to do this only once. (ease). Unless of course they're trying to 
+pull my strings. But that's OK.
+There are 2 ways of checking if they haven't set up; try-and-except, and checking the database. I'll use 
+the former for now. So next...
+I'll lead them to create their categories. So the CATEGORIES variable will now be something like:
+ = [fc.name for fc in FileCategory.objects.all()]. 
+So after they have set up, I'll create the folders for them.
+I'll clear all folders(not files) in that dir if any, before doing so, so WARN THEM.
+Next up...
+The template. I'll dynamize the template from here using the FileCategories the user will create.
+what's left?...
+
+so let me test...
+This guy goes, and reads the manual(what's in the manual?), and then pulls
+Then he goes to port 8000 or whatever. (Another thing, I'll try to see if I can make it automatically run like in I did in Ubuntu)
+Then he obviously hasn't set up so he's directed to create_categories.html
+By the way, I'm going to clear the database everytime you go there to start afresh. (I'll see if I can make them editable)
+He types stuff, and folders are created, after he's been warned. 
+Then he literally should be good to go from here.

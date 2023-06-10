@@ -2,22 +2,28 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 import os
 import platform
+import getpass
+from .models import FileCategory
 
 
-CATEGORIES = ["ACADEMIA", "PROGRAMMING LIFE", "OTHER"]
-ROOT_DIR = "C:\\Users\\Farouq\\Documents\\Notes"
+USER = getpass.getuser()
+CATEGORIES = [d.name for d in FileCategory.objects.all()]
+ROOT_DIR = f"C:\\Users\\{USER}\\Documents\\Notes"
 if platform.system() == "Linux":
-    ROOT_DIR = "/home/farouq/Documents/Notes"
-directories = [os.fsencode(f"{ROOT_DIR}/{d}") for d in CATEGORIES]
+    ROOT_DIR = f"/home/{USER}/Documents/Notes"
+directories = [os.fsencode(f"{ROOT_DIR}/{d.name}")
+               for d in FileCategory.objects.all()]
 
 
 def get_files():
     """Getting files in directories and making sure they are up to date"""
-    global academia_file_list, programming_life_file_list, others_file_list, file_list_list
-    academia_file_list, programming_life_file_list, others_file_list = [], [], []
-    file_list_list = [academia_file_list,
-                      programming_life_file_list, others_file_list]
+    global folder1_file_list, folder2_file_list, folder3_file_list, file_list_list, directories
+    folder1_file_list, folder2_file_list, folder3_file_list = [], [], []
+    file_list_list = [folder1_file_list,
+                      folder2_file_list, folder3_file_list]
 
+    directories = [os.fsencode(f"{ROOT_DIR}/{d.name}")
+                   for d in FileCategory.objects.all()]
     for directory in directories:
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
@@ -25,31 +31,64 @@ def get_files():
                 file_list_list[directories.index(directory)].append(filename)
 
 
-get_files()
+def setup(request):
+    try:
+        get_files()
+        return redirect('home')
+    except:
+        pass
+
+    if request.method == "POST":
+        data = request.POST
+        folder1, folder2, folder3 = data.get(
+            "folder1"), data.get("folder2"), data.get("folder3")
+
+        # clear the database for FileCategories
+        FileCategory.objects.all().delete()
+
+        # create the folders using the names
+        for name in [folder1, folder2, folder3]:
+            if name:
+                FileCategory.objects.create(name=name)
+                os.makedirs(f"{ROOT_DIR}/{name.upper()}")
+        get_files()
+        return redirect('home')
+    return render(request, "setup.html", {})
+
 
 
 # Create your views here.
+
+
 def home(request):
-    get_files()
+    try:
+        get_files()
+    except:
+        return redirect('setup')
+
     open_file = request.GET.get("file")
     context = {}
     notes = []
 
     if open_file is not None:
+        CATEGORIES = [d.name for d in FileCategory.objects.all()]
         for category in CATEGORIES:
             try:
                 with open(f"{ROOT_DIR}/{category}/{open_file}", "r") as file_opened:
                     notes = file_opened.readlines()
-                    context.update({"notes": notes, "file_category": f"{category.capitalize()}"
-                                    if category != "PROGRAMMING LIFE" else "Programming Life"})
+                    context.update({"notes": notes, "file_category": f"{category.upper()}"})
                     break
             except FileNotFoundError:
-                if CATEGORIES.index(category) == 2:
+                print("Exception:", category)
+                print(CATEGORIES)
+                if CATEGORIES.index(category) == len(CATEGORIES)-1:
                     return redirect("home")
 
-    context.update({"open_file": open_file, "academia_file_list": academia_file_list,
-                    "programming_life_file_list": programming_life_file_list,
-                    "others_file_list": others_file_list})
+    files = dict(zip([category.name.upper() for category in FileCategory.objects.all()], [
+                 folder1_file_list, folder2_file_list, folder3_file_list]))
+    context.update({"open_file": open_file, "folder1_file_list": folder1_file_list,
+                    "folder2_file_list": folder2_file_list,
+                    "folder3_file_list": folder3_file_list, "files": files})
     return render(request, "home.html", context)
 
 
@@ -59,8 +98,8 @@ def save(request):
         notes = post_data.get("notes")
         category = post_data.get("category")
 
-        filename = post_data.get("hidden-filename")
-        original_filename = post_data.get("original_filename")
+        filename = str(post_data.get("hidden-filename")).strip()
+        original_filename = str(post_data.get("original_filename")).strip()
 
         if original_filename != "" and original_filename != filename:
             for file_list in file_list_list:
@@ -74,7 +113,7 @@ def save(request):
         # and we've chosen a category.
         # Just double-checking that we have a category even though it's enforced using js in the frontend...
         if category is not None:
-            with open(f"/home/farouq/Documents/Notes/{category.upper()}/{filename}", "w") as file:
+            with open(f"{ROOT_DIR}/{str(category).upper()}/{filename}", "w") as file:
                 for note in notes:
                     file.write(note.rstrip("\n"))
     return redirect(f"/?file={filename}")

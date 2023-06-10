@@ -200,14 +200,13 @@
   <body>
     <nav>
       <h1 style="color: black; cursor: pointer" id="filename">
-        {% if not open_file %}Untitled.txt{% else %}{{open_file}}{%endif %}
+        {% if not open_file %}Untitled.txt{% else %}{{open_file}}{% endif %}
       </h1>
 
-      <input
-        id="filename-input"
-        onkeypress="handle_enter(event)"
-        style="z-index: 4; font-size: 20px; text-align: center"
-        type="hidden" />
+      <!-- This input field is not part of the form. But it's necessary for the user experience. 
+        The actual input field reads its value from this during submission. (#hidden-filename) -->
+      <input id="filename-input" onkeypress="handle_enter(event)" style="z-index: 4; font-size: 20px; 
+      text-align: center" type="hidden"/>
 
       <a href="/" class="nav-item" id="new-btn"> New</a>
 
@@ -217,69 +216,38 @@
         <button class="nav-item btn-buy-list" id="open-btn">Open</button>
         <!-- Dropdown menu itself - hidden by default -->
         <ul class="dropdown-menu" style="padding: 0; background: #0b8dca">
+         
+          {% for file_category, file_list in files.items %}
           <li class="">
             <div class="" onmouseenter="show_children(this)" onmouseleave="hide_children(this)">
-              <button class="fore-button" id="">ACADEMIA &LongRightArrow;</button>
+              <button class="fore-button" id="">{{file_category}} &LongRightArrow;</button>
               <ul class="dropdown-menu" style="width: 100%">
-                {% for filename in academia_file_list %}
-                <a style="font-size: 1.2em" href="{% url 'home' %}?file={{filename}}">
-                  <li>{{filename}}</li>
-                </a>
-                {% endfor %}
+                  {% for filename in file_list %}
+                    <a style="font-size: 1.2em" href="{% url 'home' %}?file={{filename}}">
+                      <li>{{filename}}</li>
+                    </a>
+                  {% endfor %}
               </ul>
             </div>
           </li>
-
-          <li class="">
-            <div class="" onmouseenter="show_children(this)" onmouseleave="hide_children(this)">
-              <button class="fore-button" id="">PROGRAMMING LIFE &LongRightArrow;</button>
-              <ul class="dropdown-menu" style="width: 100%">
-                {% for filename in programming_life_file_list %}
-                <a style="font-size: 1.2em" href="{% url 'home' %}?file={{filename}}">
-                  <li>{{filename}}</li>
-                </a>
-                {% endfor %}
-              </ul>
-            </div>
-          </li>
-
-          <li class="">
-            <div class="" onmouseenter="show_children(this)" onmouseleave="hide_children(this)">
-              <button class="fore-button" id="">OTHER &LongRightArrow;</button>
-              <ul class="dropdown-menu" style="width: 100%">
-                {% for filename in others_file_list %}
-                <a onclick="authenticate(this)" style="font-size: 1.2em" href="{% url 'home' %}?file={{filename}}">
-                  <li>{{filename}}</li>
-                </a>
-                {% endfor %}
-              </ul>
-            </div>
-          </li>
+          {% endfor %}
         </ul>
       </div>
 
       <div class="category-box btn-group">
-        <button
-          class="btn"
-          onclick="change_active(this)"
-          style="border-bottom-left-radius: 7px; border-top-left-radius: 7px">
-          Academia
-        </button>
-        <button class="btn" onclick="change_active(this)">Programming Life</button>
-        <button
-          class="btn"
-          onclick="change_active(this)"
-          style="border-top-right-radius: 7px; border-bottom-right-radius: 7px">
-          Other
-        </button>
+        {% for file_category in files %}
+          <button class="btn" onclick="change_active(this)">{{file_category}}</button>
+        {% endfor %}
       </div>
     </nav>
     <form id="my-form" action="{% url 'save' %}" method="POST">
       {% csrf_token %}
       <textarea name="notes">{%for note in notes %}{{note}}{% endfor %}</textarea>
       <input id="hidden-filename" name="hidden-filename" type="hidden" />
+
+      <!-- This input field is for keeping the original filename so we can check and rename when the user changes the filename -->
       <input type="hidden" name="original_filename" value="{% if open_file %}{{open_file}}{% endif %}" />
-      <!-- <input type="submit"> -->
+
       <input type="hidden" id="category" name="category" value="{% if file_category %}{{file_category}}{% endif %}" />
     </form>
   </body>
@@ -296,6 +264,10 @@
   const category_box = document.querySelector(".category-box");
   const buttons = category_box.querySelectorAll("button");
   const category = document.querySelector("#category");
+  var isSaved = true;
+  
+  buttons[0].style.borderRadius = "7px 0 0 7px";
+  buttons[buttons.length - 1].style.borderRadius = "0 7px 7px 0";
 
   for (btn of buttons) {
     btn.addEventListener("dblclick", () => {
@@ -313,11 +285,14 @@
     }
   }
 
-  if (window.location.href != "http://127.0.0.1:10000/") {
+  // If we are in a file, set the hidden filename to the actual filename. (Sounds redundant but its initial value 
+  // is empty and we can't set it in the HTML because of the condition that we're in a file and the file has a name)
+  if (window.location.search != "") {
     hidden_filename.value = filename.innerText;
   }
 
   function change_active(btn) {
+    if (window.location.search != "") return;
     if (btn.matches(".active")) {
       btn.setAttribute("class", "btn");
       category.value = "";
@@ -368,18 +343,23 @@
   filename.addEventListener("dblclick", function (e) {
     filename.style.display = "none";
     filename_input.setAttribute("type", "text");
-    filename_input.value = filename.innerText;
-    // hidden_filename.value = filename.innerText;
+    let str = filename.innerText;
+    if (str.endsWith("*")){
+      filename_input.value =  str.slice(0, -1);
+      isSaved = false;
+    } else filename_input.value =  str;
     filename_input.focus();
   });
 
   window.addEventListener("click", function () {
     if (filename.style.display == "none") {
       filename.style.display = "block";
-      filename.innerText = filename_input.value;
+
+      if (!isSaved) filename.innerText = filename_input.value + "*";
+      else filename.innerText = filename_input.value;
       filename_input.setAttribute("type", "hidden");
       document.querySelector("textarea").focus();
-      hidden_filename.value = filename.innerText;
+      hidden_filename.value = filename_input.value;
     }
   });
 
@@ -393,14 +373,14 @@
         filename.style.display = "block";
         filename.innerText = filename_input.value;
         filename_input.setAttribute("type", "hidden");
-        hidden_filename.value = filename.innerText;
+        hidden_filename.value = filename_input.value;
       }
     }
   }
 
   function submit_form(e) {
     e.preventDefault();
-    if (window.location.href == "http://127.0.0.1:10000/") {
+    if (window.location.search === "") {
       if ((hidden_filename.value == "") | (hidden_filename.value == "Untitled.txt")) {
         alert("Name your file!");
       } else if (category.value == "") {
