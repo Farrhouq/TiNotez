@@ -126,18 +126,26 @@ def edit_categories(request):
             "folder1"), data.get("folder2"), data.get("folder3")
         folder_names = [folder1, folder2, folder3]
         i = 0
-        for i in range(len(CATEGORIES)):
-            if folder_names[i] != CATEGORIES[i]:
+        for i in range(len(folder_names)):
+            if i > len(CATEGORIES)-1:
+                if folder_names[i] == "":
+                    continue
+                FileCategory.objects.create(name=folder_names[i])
+                os.makedirs(f"{ROOT_DIR}/{folder_names[i].upper()}")
+            else:
                 if folder_names[i] == "":
                     # os.remove(f"{ROOT_DIR}/{CATEGORIES[i]}/") -> I wanted to delete it... but no. I don't have time to code a confirmation to delete them.
                     continue
-                cat = categories[i]
-                os.rename(
-                    f"{ROOT_DIR}/{CATEGORIES[i]}/",
-                    f"{ROOT_DIR}/{folder_names[i]}/",
-                )
-                cat.name = folder_names[i]
-                cat.save()
+                if folder_names[i] != CATEGORIES[i]:
+                    cat = categories[i]
+                    os.rename(
+                        f"{ROOT_DIR}/{CATEGORIES[i]}/",
+                        f"{ROOT_DIR}/{folder_names[i]}/",
+                    )
+                    cat.name = folder_names[i]
+                    cat.save()
+            CATEGORIES = [d.name for d in FileCategory.objects.all()]
+            
         return redirect("home")
 
     context = {

@@ -261,7 +261,8 @@
 
       <div class="">
         <button class="nav-item" id="help">Help</button>
-        <div id="help-text" style="background: white;color:black;display: none;width:500px;padding:5px 15px;border:2px solid black;
+        <div id="help-text" style="background: rgb(9, 79, 126);color:rgb(255, 255, 255);display: none;width:500px;
+        padding:5px 15px;border:2px solid rgb(255, 255, 255);border-top:2px solid rgb(9, 79, 126);
         border-radius: 8px">
           <p>
             <h2>Instructions and Tips</h2>
@@ -337,11 +338,13 @@
   buttons[buttons.length - 1].style.borderRadius = "0 7px 7px 0";
   if (buttons.length == 1) buttons[0].style.borderRadius = "7px";
 
-  for (btn of buttons) {
+  /* for (btn of buttons) {
     btn.addEventListener("dblclick", () => {
       event.stopPropagation();
     });
-  }
+  } */ 
+
+  category_box.addEventListener('dblclick', (event) => window.location = "{% url 'edit' %}")
 
   filename.addEventListener("dblclick", () => {
     event.stopPropagation();
@@ -359,7 +362,10 @@
     hidden_filename.value = filename.innerText;
   }
 
-  helpBtn.addEventListener("click", function () {
+  help.addEventListener('click', (event) => event.stopPropagation());
+
+  helpBtn.addEventListener("click", function (event) {
+    event.stopPropagation();
     h = help.style.display == "none";
     if (h) {
       help.style.display = "block";
@@ -465,7 +471,7 @@
       ) {
         alert("Name your file!");
       } else if (category.value == "") {
-        alert("Select a category");
+        alert("Select a category at the top-right");
       } else {
         if (filename.style.display == "none") {
           filename.style.display = "block";
@@ -513,15 +519,11 @@
   });
 
   window.onclick = function (event) {
+    if(help.style.display != 'none' & event.target != helpBtn & event.target != help)
+      {console.log("clicked anywhere else when it was open"); help.style.display = 'none'}
     closeAll();
   };
 
-  //when showing... click anywhere else or on the button
-  //when hidden...  click on button to show
-  // when you click anywhere, check if it's visible, if yes, hide it.
-  //but also check if the target is not the button
-
-  //when hidden, if you click anywhere, it should check if that's the button. if not, nothing. if yes, show
   document.addEventListener("keydown", function (event) {
     if (event.ctrlKey && event.key === "s") {
       // alert('saved!');
