@@ -1,0 +1,125 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TiNotez</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}" />
+
+    <style>
+      body {
+        background-color: rgb(7, 52, 88);
+        color: white;
+      }
+
+      .big-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        margin-top: 1%;
+      }
+
+      .left-side {
+        padding: 3%;
+      }
+
+      .right-side {
+        padding: 10%;
+        border-left: 2px solid white;
+        font-size: 20px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+
+      #submit {
+        width: fit-content;
+        padding: 1.4%;
+        font-size: larger;
+        text-align: center;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="big-container">
+      <div class="left-side">
+        <h1>Set up your folders. Easy.</h1>
+        <form action="" method="POST">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="field1">Folder 1:</label>
+            <input
+              type="text"
+              id="field1"
+              name="folder1"
+              value="{{ folder1 }}"
+              {% if page == 'setup'%}required {% endif %}
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="field2">Folder 2:</label>
+            <input
+              type="text"
+              id="field2"
+              name="folder2"
+              value="{{ folder2 }}"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="field3">Folder 3:</label>
+            <input
+              type="text"
+              id="field3"
+              name="folder3"
+              value="{{ folder3 }}"
+            />
+          </div>
+          <input type="submit" value="Save" id="submit" />
+        </form>
+      </div>
+      <div class="right-side">
+        <h2>Instructions and Tips</h2>
+
+        <h4>Instructions</h4>
+        <ul>
+          <li>Set up folder categories for a maximum of three(3) folders</li>
+          <li>
+            That's all you need to do. You will be redirected to the editor once
+            you submit the form on the left
+          </li>
+        </ul>
+
+        <h4>Tips for using editor</h4>
+        <ul>
+          <li>Press Ctrl+S to save</li>
+          <li>Double-click on the filename at the top-left to edit it</li>
+          <li>Press Enter or click anywhere else after editing filename</li>
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>

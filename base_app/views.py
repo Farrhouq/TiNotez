@@ -11,16 +11,21 @@ CATEGORIES = [d.name for d in FileCategory.objects.all()]
 ROOT_DIR = f"C:\\Users\\{USER}\\Documents\\Notes"
 if platform.system() == "Linux":
     ROOT_DIR = f"/home/{USER}/Documents/Notes"
-directories = [os.fsencode(f"{ROOT_DIR}/{d.name}") for d in FileCategory.objects.all()]
+directories = [os.fsencode(f"{ROOT_DIR}/{d.name}")
+               for d in FileCategory.objects.all()]
 
 
 def get_files():
     """Getting files in directories and making sure they are up to date"""
     global folder1_file_list, folder2_file_list, folder3_file_list, file_list_list, directories
-    
+
+    if not FileCategory.objects.all().count():
+        raise Exception("No categories set up")
+
     folder1_file_list, folder2_file_list, folder3_file_list = [], [], []
     file_list_list = [folder1_file_list, folder2_file_list, folder3_file_list]
-    directories = [os.fsencode(f"{ROOT_DIR}/{d.name}") for d in FileCategory.objects.all()]
+    directories = [os.fsencode(f"{ROOT_DIR}/{d.name}")
+                   for d in FileCategory.objects.all()]
 
     for directory in directories:
         for file in os.listdir(directory):
@@ -31,12 +36,16 @@ def get_files():
 
 # Create your views here.
 def setup(request):
+    page = "setup"
     try:
         get_files()
         return redirect('home')
     except:
         pass
     if request.method == "POST":
+        data = request.POST
+        folder1, folder2, folder3 = data.get(
+            "folder1"), data.get("folder2"), data.get("folder3")
         data = request.POST
         folder1, folder2, folder3 = data.get(
             "folder1"), data.get("folder2"), data.get("folder3")
@@ -49,7 +58,7 @@ def setup(request):
                 os.makedirs(f"{ROOT_DIR}/{name.upper()}")
         get_files()
         return redirect('home')
-    return render(request, "setup.html", {})
+    return render(request, "edit-fc.html", {"page":page})
 
 
 def home(request):
@@ -71,8 +80,6 @@ def home(request):
                         {"notes": notes, "file_category": f"{category.upper()}"})
                     break
             except FileNotFoundError:
-                print("Exception:", category)
-                print(CATEGORIES)
                 if CATEGORIES.index(category) == len(CATEGORIES)-1:
                     return redirect("home")
     files = dict(zip([category.name.upper() for category in FileCategory.objects.all()], [
@@ -106,3 +113,36 @@ def save(request):
                 for note in notes:
                     file.write(note.rstrip("\n"))
     return redirect(f"/?file={filename}")
+
+
+def edit_categories(request):
+    categories = FileCategory.objects.all()
+    global CATEGORIES
+    CATEGORIES = [d.name for d in FileCategory.objects.all()]
+
+    if request.method == "POST":
+        data = request.POST
+        folder1, folder2, folder3 = data.get(
+            "folder1"), data.get("folder2"), data.get("folder3")
+        folder_names = [folder1, folder2, folder3]
+        i = 0
+        for i in range(len(CATEGORIES)):
+            if folder_names[i] != CATEGORIES[i]:
+                if folder_names[i] == "":
+                    # os.remove(f"{ROOT_DIR}/{CATEGORIES[i]}/") -> I wanted to delete it... but no. I don't have time to code a confirmation to delete them.
+                    continue
+                cat = categories[i]
+                os.rename(
+                    f"{ROOT_DIR}/{CATEGORIES[i]}/",
+                    f"{ROOT_DIR}/{folder_names[i]}/",
+                )
+                cat.name = folder_names[i]
+                cat.save()
+        return redirect("home")
+
+    context = {
+        "folder1": CATEGORIES[0] if categories.count() >= 1 else "",
+        "folder2": CATEGORIES[1] if categories.count() >= 2 else "",
+        "folder3": CATEGORIES[2] if categories.count() >= 3 else ""
+    }
+    return render(request, "edit-fc.html", context)

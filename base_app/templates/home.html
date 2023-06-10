@@ -1,11 +1,15 @@
-<!-- @format -->
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Notes | {% if open_file is not None %}{{ open_file }}{%else%}Untitled{%endif%}</title>
+    <title>
+      TiNotez | {% if open_file is not None %}{{ open_file
+      }}{%else%}Untitled{%endif%}
+    </title>
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}" />
     <style>
       .full-width {
         width: 100%;
@@ -180,6 +184,10 @@
         border: 3px solid #0b8dca;
       }
 
+      li {
+        margin-top: 5px;
+      }
+
       #passcode-div {
         padding: 5px;
         display: none;
@@ -205,28 +213,45 @@
 
       <!-- This input field is not part of the form. But it's necessary for the user experience. 
         The actual input field reads its value from this during submission. (#hidden-filename) -->
-      <input id="filename-input" onkeypress="handle_enter(event)" style="z-index: 4; font-size: 20px; 
-      text-align: center" type="hidden"/>
+      <input
+        id="filename-input"
+        onkeypress="handle_enter(event)"
+        style="z-index: 4; font-size: 20px; text-align: center"
+        type="hidden"
+      />
 
       <a href="/" class="nav-item" id="new-btn"> New</a>
 
-      <a href="" id="save" onclick="submit_form(event)" class="nav-item"> Save</a>
+      <a href="" id="save" onclick="submit_form(event)" class="nav-item">
+        Save</a
+      >
 
       <div class="product-price-box">
         <button class="nav-item btn-buy-list" id="open-btn">Open</button>
         <!-- Dropdown menu itself - hidden by default -->
-        <ul class="dropdown-menu" style="padding: 0; background: #0b8dca;display:none">
-         
+        <ul
+          class="dropdown-menu"
+          style="padding: 0; background: #0b8dca; display: none"
+        >
           {% for file_category, file_list in files.items %}
           <li class="">
-            <div class="" onmouseenter=" show_children(this)" onmouseleave="hide_children(this)">
-              <button class="fore-button" id="">{{file_category}} &LongRightArrow;</button>
+            <div
+              class=""
+              onmouseenter=" show_children(this)"
+              onmouseleave="hide_children(this)"
+            >
+              <button class="fore-button" id="">
+                {{file_category}} &LongRightArrow;
+              </button>
               <ul class="dropdown-menu" style="width: 100%">
-                  {% for filename in file_list %}
-                    <a style="font-size: 1.2em" href="{% url 'home' %}?file={{filename}}">
-                      <li>{{filename}}</li>
-                    </a>
-                  {% endfor %}
+                {% for filename in file_list %}
+                <a
+                  style="font-size: 1.2em"
+                  href="{% url 'home' %}?file={{filename}}"
+                >
+                  <li>{{filename}}</li>
+                </a>
+                {% endfor %}
               </ul>
             </div>
           </li>
@@ -234,220 +259,274 @@
         </ul>
       </div>
 
+      <div class="">
+        <button class="nav-item" id="help">Help</button>
+        <div id="help-text" style="background: white;color:black;display: none;width:500px;padding:5px 15px;border:2px solid black;
+        border-radius: 8px">
+          <p>
+            <h2>Instructions and Tips</h2>
+
+            <h4>Instructions</h4>
+            <ul>
+              <li>Set up folder categories for a maximum of three(3) folders</li>
+              <li>
+                That's all you need to do. You will be redirected back to the editor once
+                you submit the form <a href="{% url 'edit' %}">here</a>
+              </li>
+            </ul>
+    
+            <h4>Tips for using editor</h4>
+            <ul>
+              <li>Double-click on the category folder names to edit them</li>
+              <li>Press Ctrl+S to save</li>
+              <li>Double-click on the filename at the top-left to edit it</li>
+              <li>Press Enter or click anywhere else after editing filename</li>
+            </ul>
+          </p>
+        </div>
+      </div>
+
       <div class="category-box btn-group">
         {% for file_category in files %}
-          <button class="btn" onclick="change_active(this)">{{file_category}}</button>
+        <button class="btn" onclick="change_active(this)">
+          {{file_category}}
+        </button>
         {% endfor %}
       </div>
     </nav>
     <form id="my-form" action="{% url 'save' %}" method="POST">
       {% csrf_token %}
-      <textarea name="notes">{%for note in notes %}{{note}}{% endfor %}</textarea>
+      <textarea name="notes">
+{%for note in notes %}{{note}}{% endfor %}</textarea
+      >
       <input id="hidden-filename" name="hidden-filename" type="hidden" />
 
       <!-- This input field is for keeping the original filename so we can check and rename when the user changes the filename -->
-      <input type="hidden" name="original_filename" value="{% if open_file %}{{open_file}}{% endif %}" />
+      <input
+        type="hidden"
+        name="original_filename"
+        value="{% if open_file %}{{open_file}}{% endif %}"
+      />
 
-      <input type="hidden" id="category" name="category" value="{% if file_category %}{{file_category}}{% endif %}" />
+      <input
+        type="hidden"
+        id="category"
+        name="category"
+        value="{% if file_category %}{{file_category}}{% endif %}"
+      />
     </form>
   </body>
 </html>
 <script>
-    const form = document.querySelector("form");
-    const text_area = document.querySelector("textarea");
-    const nav = document.querySelector("nav");
-    const open_btn = document.querySelector("#open-btn");
-    const new_btn = document.querySelector("#new-btn");
-    const hidden_filename = document.querySelector("#hidden-filename");
-    const filename = document.querySelector("#filename");
-    const filename_input = document.querySelector("#filename-input");
-    const category_box = document.querySelector(".category-box");
-    const buttons = category_box.querySelectorAll("button");
-    const category = document.querySelector("#category");
-    var isSaved = true;
+  const form = document.querySelector("form");
+  const text_area = document.querySelector("textarea");
+  const nav = document.querySelector("nav");
+  const open_btn = document.querySelector("#open-btn");
+  const new_btn = document.querySelector("#new-btn");
+  const hidden_filename = document.querySelector("#hidden-filename");
+  const filename = document.querySelector("#filename");
+  const filename_input = document.querySelector("#filename-input");
+  const category_box = document.querySelector(".category-box");
+  const buttons = category_box.querySelectorAll("button");
+  const category = document.querySelector("#category");
+  const helpBtn = document.querySelector("#help");
+  const help = document.querySelector("#help-text");
+  var isSaved = true;
 
-    buttons[0].style.borderRadius = "7px 0 0 7px";
-    buttons[buttons.length - 1].style.borderRadius = "0 7px 7px 0";
-    if (buttons.length == 1) 
-        buttons[0].style.borderRadius = "7px";
-    
+  buttons[0].style.borderRadius = "7px 0 0 7px";
+  buttons[buttons.length - 1].style.borderRadius = "0 7px 7px 0";
+  if (buttons.length == 1) buttons[0].style.borderRadius = "7px";
 
-    for (btn of buttons) {
-        btn.addEventListener("dblclick", () => {
-            event.stopPropagation();
-        });
-    }
-
-    filename.addEventListener("dblclick", () => {
-        event.stopPropagation();
+  for (btn of buttons) {
+    btn.addEventListener("dblclick", () => {
+      event.stopPropagation();
     });
+  }
 
-    for (button of buttons) {
-        if (button.innerText == category.value) {
-            button.setAttribute("class", " btn active");
+  filename.addEventListener("dblclick", () => {
+    event.stopPropagation();
+  });
+
+  for (button of buttons) {
+    if (button.innerText == category.value) {
+      button.setAttribute("class", " btn active");
+    }
+  }
+
+  // If we are in a file, set the hidden filename to the actual filename. (Sounds redundant but its initial value
+  // is empty and we can't set it in the HTML because of the condition that we're in a file and the file has a name)
+  if (window.location.search != "") {
+    hidden_filename.value = filename.innerText;
+  }
+
+  helpBtn.addEventListener("click", function () {
+    h = help.style.display == "none";
+    if (h) {
+      help.style.display = "block";
+      help.style.position = "absolute";
+    } else help.style.display = "none";
+  });
+
+  function change_active(btn) {
+    if (window.location.search != "") return;
+
+    if (btn.matches(".active")) {
+      btn.setAttribute("class", "btn");
+      category.value = "";
+    } else {
+      btn.setAttribute("class", " btn active");
+      for (other_button of buttons) {
+        if (other_button != btn) {
+          other_button.setAttribute("class", "btn");
         }
+      }
+      category.value = btn.innerText;
     }
+  }
 
-    // If we are in a file, set the hidden filename to the actual filename. (Sounds redundant but its initial value
-    // is empty and we can't set it in the HTML because of the condition that we're in a file and the file has a name)
-    if (window.location.search != "") {
-        hidden_filename.value = filename.innerText;
+  function show_children(element) {
+    if (!element.firstElementChild.nextElementSibling.firstElementChild) return;
+    element.firstElementChild.nextElementSibling.style.display = "block";
+    element.firstElementChild.nextElementSibling.style.marginLeft = "150px";
+    element.firstElementChild.nextElementSibling.style.marginTop = "-30px";
+  }
+
+  function hide_children(element) {
+    element.firstElementChild.nextElementSibling.style.display = "none";
+    element.firstElementChild.nextElementSibling.style.marginLeft = "";
+  }
+
+  new_btn.addEventListener("click", function (event) {
+    if (filename.innerText[filename.innerText.length - 1] == "*") {
+      event.preventDefault();
+      alert("Save your file or refresh the page to clear all changes");
+      // alert('You have not saved your file. Autosaving...');
+      // document.querySelector("#my-form").submit();
     }
+  });
+  text_area.focus();
+  text_area.setSelectionRange(text_area.value.length, text_area.value.length);
+  text_area.scrollTop = text_area.scrollHeight;
 
-    function change_active(btn) {
-        if (window.location.search != "") 
-            return;
-        
-        if (btn.matches(".active")) {
-            btn.setAttribute("class", "btn");
-            category.value = "";
-        } else {
-            btn.setAttribute("class", " btn active");
-            for (other_button of buttons) {
-                if (other_button != btn) {
-                    other_button.setAttribute("class", "btn");
-                }
-            }
-            category.value = btn.innerText;
-        }
+  form.addEventListener(
+    "input",
+    (e) => {
+      if (filename != "Untitled.txt") {
+        filename.innerText += "*";
+      }
+    },
+    { once: true }
+  );
+
+  filename.addEventListener("dblclick", function (e) {
+    filename.style.display = "none";
+    filename_input.setAttribute("type", "text");
+    let str = filename.innerText;
+    if (str.endsWith("*")) {
+      filename_input.value = str.slice(0, -1);
+      isSaved = false;
+    } else filename_input.value = str;
+    filename_input.focus();
+  });
+
+  window.addEventListener("click", function () {
+    if (filename.style.display == "none") {
+      filename.style.display = "block";
+
+      if (!isSaved) filename.innerText = filename_input.value + "*";
+      else filename.innerText = filename_input.value;
+      filename_input.setAttribute("type", "hidden");
+      document.querySelector("textarea").focus();
+      hidden_filename.value = filename_input.value;
     }
+  });
 
-    function show_children(element) {
-        if (!element.firstElementChild.nextElementSibling.firstElementChild) return;
-        element.firstElementChild.nextElementSibling.style.display = "block";
-        element.firstElementChild.nextElementSibling.style.marginLeft = "150px";
-        element.firstElementChild.nextElementSibling.style.marginTop = "-30px";
+  filename_input.addEventListener("click", function (e) {
+    e.stopPropagation();
+  });
+
+  function handle_enter(event) {
+    if (event.keyCode == 13) {
+      if (filename.style.display == "none") {
+        filename.style.display = "block";
+        filename.innerText = filename_input.value;
+        filename_input.setAttribute("type", "hidden");
+        hidden_filename.value = filename_input.value;
+      }
     }
+  }
 
-    function hide_children(element) {
-        element.firstElementChild.nextElementSibling.style.display = "none";
-        element.firstElementChild.nextElementSibling.style.marginLeft = "";
-    }
-
-    new_btn.addEventListener("click", function (event) {
-        if (filename.innerText[filename.innerText.length - 1] == "*") {
-            event.preventDefault();
-            alert("Save your file or refresh the page to clear all changes");
-            // alert('You have not saved your file. Autosaving...');
-            // document.querySelector("#my-form").submit();
-        }
-    });
-    text_area.focus();
-    text_area.setSelectionRange(text_area.value.length, text_area.value.length);
-    text_area.scrollTop = text_area.scrollHeight;
-
-    form.addEventListener("input", (e) => {
-        if (filename != "Untitled.txt") {
-            filename.innerText += "*";
-        }
-    }, {once: true});
-
-    filename.addEventListener("dblclick", function (e) {
-        filename.style.display = "none";
-        filename_input.setAttribute("type", "text");
-        let str = filename.innerText;
-        if (str.endsWith("*")) {
-            filename_input.value = str.slice(0, -1);
-            isSaved = false;
-        } else 
-            filename_input.value = str;
-         filename_input.focus();
-    });
-
-    window.addEventListener("click", function () {
+  function submit_form(e) {
+    e.preventDefault();
+    if (window.location.search === "") {
+      if (
+        (hidden_filename.value == "") |
+        (hidden_filename.value == "Untitled.txt")
+      ) {
+        alert("Name your file!");
+      } else if (category.value == "") {
+        alert("Select a category");
+      } else {
         if (filename.style.display == "none") {
-            filename.style.display = "block";
-
-            if (! isSaved) 
-                filename.innerText = filename_input.value + "*";
-             else 
-                filename.innerText = filename_input.value;
-             filename_input.setAttribute("type", "hidden");
-            document.querySelector("textarea").focus();
-            hidden_filename.value = filename_input.value;
+          filename.style.display = "block";
+          filename.innerText = filename_input.value;
+          filename_input.setAttribute("type", "hidden");
+          document.querySelector("textarea").focus();
+          hidden_filename.value = filename.innerText;
         }
-    });
-
-    filename_input.addEventListener("click", function (e) {
-        e.stopPropagation();
-    });
-
-    function handle_enter(event) {
-        if (event.keyCode == 13) {
-            if (filename.style.display == "none") {
-                filename.style.display = "block";
-                filename.innerText = filename_input.value;
-                filename_input.setAttribute("type", "hidden");
-                hidden_filename.value = filename_input.value;
-            }
-        }
+        document.querySelector("#my-form").submit();
+      }
+    } else {
+      if (filename.style.display == "none") {
+        filename.style.display = "block";
+        filename.innerText = filename_input.value;
+        filename_input.setAttribute("type", "hidden");
+        document.querySelector("textarea").focus();
+        hidden_filename.value = filename.innerText;
+      }
+      document.querySelector("#my-form").submit();
     }
+  }
 
-    function submit_form(e) {
-        e.preventDefault();
-        if (window.location.search === "") {
-            if ((hidden_filename.value == "") | (hidden_filename.value == "Untitled.txt")) {
-                alert("Name your file!");
-            } else if (category.value == "") {
-                alert("Select a category");
-            } else {
-                if (filename.style.display == "none") {
-                    filename.style.display = "block";
-                    filename.innerText = filename_input.value;
-                    filename_input.setAttribute("type", "hidden");
-                    document.querySelector("textarea").focus();
-                    hidden_filename.value = filename.innerText;
-                }
-                document.querySelector("#my-form").submit();
-            }
-        } else {
-            if (filename.style.display == "none") {
-                filename.style.display = "block";
-                filename.innerText = filename_input.value;
-                filename_input.setAttribute("type", "hidden");
-                document.querySelector("textarea").focus();
-                hidden_filename.value = filename.innerText;
-            }
-            document.querySelector("#my-form").submit();
-        }
+  // toggle dropdown menu open/close
+  const menu = document.querySelector("#open-btn").nextElementSibling;
+
+  function toggle(e) {
+    e.stopPropagation();
+    if (filename.innerText[filename.innerText.length - 1] == "*") {
+      alert("Save your file or refresh the page to clear all changes");
+      // alert('You have not saved your file. Autosaving...');
+      // document.querySelector("#my-form").submit();
+    } else {
+      if (menu.style.display == "none") menu.style.display = "block";
+      else if (menu.style.display == "block") menu.style.display = "none";
     }
+  }
+  function closeAll() {
+    menu.style.display = "none";
+  }
 
-    // toggle dropdown menu open/close
-    const menu = document.querySelector("#open-btn").nextElementSibling;
-
-    function toggle(e) {
-        e.stopPropagation();
-        if (filename.innerText[filename.innerText.length - 1] == "*") {
-            alert("Save your file or refresh the page to clear all changes");
-            // alert('You have not saved your file. Autosaving...');
-            // document.querySelector("#my-form").submit();
-        } else {
-            if (menu.style.display == 'none') 
-                menu.style.display = 'block'
-             else if (menu.style.display == 'block') 
-                menu.style.display = 'none'
-            
-        }
-    }
-    function closeAll() {
-        menu.style.display = "none";
-    }
-
-    window.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".btn-buy-list").forEach(function (btn) {
-            btn.addEventListener("click", toggle, true);
-        });
+  window.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".btn-buy-list").forEach(function (btn) {
+      btn.addEventListener("click", toggle, true);
     });
+  });
 
-    window.onclick = function (event) {
-        closeAll();
-    };
+  window.onclick = function (event) {
+    closeAll();
+  };
 
-    document.addEventListener("keydown", function (event) {
-        if (event.ctrlKey && event.key === "s") { // alert('saved!');
-            event.preventDefault();
-            document.querySelector("#my-form").submit();
-        }
-    });
+  //when showing... click anywhere else or on the button
+  //when hidden...  click on button to show
+  // when you click anywhere, check if it's visible, if yes, hide it.
+  //but also check if the target is not the button
+
+  //when hidden, if you click anywhere, it should check if that's the button. if not, nothing. if yes, show
+  document.addEventListener("keydown", function (event) {
+    if (event.ctrlKey && event.key === "s") {
+      // alert('saved!');
+      event.preventDefault();
+      submit_form(event);
+    }
+  });
 </script>
-
