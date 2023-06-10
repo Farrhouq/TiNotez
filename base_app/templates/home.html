@@ -215,11 +215,11 @@
       <div class="product-price-box">
         <button class="nav-item btn-buy-list" id="open-btn">Open</button>
         <!-- Dropdown menu itself - hidden by default -->
-        <ul class="dropdown-menu" style="padding: 0; background: #0b8dca">
+        <ul class="dropdown-menu" style="padding: 0; background: #0b8dca;display:none">
          
           {% for file_category, file_list in files.items %}
           <li class="">
-            <div class="" onmouseenter="show_children(this)" onmouseleave="hide_children(this)">
+            <div class="" onmouseenter=" show_children(this)" onmouseleave="hide_children(this)">
               <button class="fore-button" id="">{{file_category}} &LongRightArrow;</button>
               <ul class="dropdown-menu" style="width: 100%">
                   {% for filename in file_list %}
@@ -253,210 +253,201 @@
   </body>
 </html>
 <script>
-  const form = document.querySelector("form");
-  const text_area = document.querySelector("textarea");
-  const nav = document.querySelector("nav");
-  const open_btn = document.querySelector("#open-btn");
-  const new_btn = document.querySelector("#new-btn");
-  const hidden_filename = document.querySelector("#hidden-filename");
-  const filename = document.querySelector("#filename");
-  const filename_input = document.querySelector("#filename-input");
-  const category_box = document.querySelector(".category-box");
-  const buttons = category_box.querySelectorAll("button");
-  const category = document.querySelector("#category");
-  var isSaved = true;
-  
-  buttons[0].style.borderRadius = "7px 0 0 7px";
-  buttons[buttons.length - 1].style.borderRadius = "0 7px 7px 0";
+    const form = document.querySelector("form");
+    const text_area = document.querySelector("textarea");
+    const nav = document.querySelector("nav");
+    const open_btn = document.querySelector("#open-btn");
+    const new_btn = document.querySelector("#new-btn");
+    const hidden_filename = document.querySelector("#hidden-filename");
+    const filename = document.querySelector("#filename");
+    const filename_input = document.querySelector("#filename-input");
+    const category_box = document.querySelector(".category-box");
+    const buttons = category_box.querySelectorAll("button");
+    const category = document.querySelector("#category");
+    var isSaved = true;
 
-  for (btn of buttons) {
-    btn.addEventListener("dblclick", () => {
-      event.stopPropagation();
+    buttons[0].style.borderRadius = "7px 0 0 7px";
+    buttons[buttons.length - 1].style.borderRadius = "0 7px 7px 0";
+    if (buttons.length == 1) 
+        buttons[0].style.borderRadius = "7px";
+    
+
+    for (btn of buttons) {
+        btn.addEventListener("dblclick", () => {
+            event.stopPropagation();
+        });
+    }
+
+    filename.addEventListener("dblclick", () => {
+        event.stopPropagation();
     });
-  }
 
-  filename.addEventListener("dblclick", () => {
-    event.stopPropagation();
-  });
-
-  for (button of buttons) {
-    if (button.innerText == category.value) {
-      button.setAttribute("class", " btn active");
-    }
-  }
-
-  // If we are in a file, set the hidden filename to the actual filename. (Sounds redundant but its initial value 
-  // is empty and we can't set it in the HTML because of the condition that we're in a file and the file has a name)
-  if (window.location.search != "") {
-    hidden_filename.value = filename.innerText;
-  }
-
-  function change_active(btn) {
-    if (window.location.search != "") return;
-    if (btn.matches(".active")) {
-      btn.setAttribute("class", "btn");
-      category.value = "";
-    } else {
-      btn.setAttribute("class", " btn active");
-      for (other_button of buttons) {
-        if (other_button != btn) {
-          other_button.setAttribute("class", "btn");
+    for (button of buttons) {
+        if (button.innerText == category.value) {
+            button.setAttribute("class", " btn active");
         }
-      }
-      category.value = btn.innerText;
     }
-  }
 
-  function show_children(element) {
-    element.firstElementChild.nextElementSibling.style.display = "block";
-    element.firstElementChild.nextElementSibling.style.marginLeft = "200px";
-    element.firstElementChild.nextElementSibling.style.marginTop = "-50px";
-  }
-
-  function hide_children(element) {
-    element.firstElementChild.nextElementSibling.style.display = "none";
-    element.firstElementChild.nextElementSibling.style.marginLeft = "";
-  }
-
-  new_btn.addEventListener("click", function (event) {
-    if (filename.innerText[filename.innerText.length - 1] == "*") {
-      event.preventDefault();
-      alert("Save your file or refresh the page to clear all changes");
-      // alert('You have not saved your file. Autosaving...');
-      // document.querySelector("#my-form").submit();
-    }
-  });
-  text_area.focus();
-  text_area.setSelectionRange(text_area.value.length, text_area.value.length);
-  text_area.scrollTop = text_area.scrollHeight;
-
-  form.addEventListener(
-    "input",
-    (e) => {
-      if (filename != "Untitled.txt") {
-        filename.innerText += "*";
-      }
-    },
-    { once: true }
-  );
-
-  filename.addEventListener("dblclick", function (e) {
-    filename.style.display = "none";
-    filename_input.setAttribute("type", "text");
-    let str = filename.innerText;
-    if (str.endsWith("*")){
-      filename_input.value =  str.slice(0, -1);
-      isSaved = false;
-    } else filename_input.value =  str;
-    filename_input.focus();
-  });
-
-  window.addEventListener("click", function () {
-    if (filename.style.display == "none") {
-      filename.style.display = "block";
-
-      if (!isSaved) filename.innerText = filename_input.value + "*";
-      else filename.innerText = filename_input.value;
-      filename_input.setAttribute("type", "hidden");
-      document.querySelector("textarea").focus();
-      hidden_filename.value = filename_input.value;
-    }
-  });
-
-  filename_input.addEventListener("click", function (e) {
-    e.stopPropagation();
-  });
-
-  function handle_enter(event) {
-    if (event.keyCode == 13) {
-      if (filename.style.display == "none") {
-        filename.style.display = "block";
-        filename.innerText = filename_input.value;
-        filename_input.setAttribute("type", "hidden");
-        hidden_filename.value = filename_input.value;
-      }
-    }
-  }
-
-  function submit_form(e) {
-    e.preventDefault();
-    if (window.location.search === "") {
-      if ((hidden_filename.value == "") | (hidden_filename.value == "Untitled.txt")) {
-        alert("Name your file!");
-      } else if (category.value == "") {
-        alert("Select a category");
-      } else {
-        if (filename.style.display == "none") {
-          filename.style.display = "block";
-          filename.innerText = filename_input.value;
-          filename_input.setAttribute("type", "hidden");
-          document.querySelector("textarea").focus();
-          hidden_filename.value = filename.innerText;
-        }
-        document.querySelector("#my-form").submit();
-      }
-    } else {
-      if (filename.style.display == "none") {
-        filename.style.display = "block";
-        filename.innerText = filename_input.value;
-        filename_input.setAttribute("type", "hidden");
-        document.querySelector("textarea").focus();
+    // If we are in a file, set the hidden filename to the actual filename. (Sounds redundant but its initial value
+    // is empty and we can't set it in the HTML because of the condition that we're in a file and the file has a name)
+    if (window.location.search != "") {
         hidden_filename.value = filename.innerText;
-      }
-      document.querySelector("#my-form").submit();
     }
-  }
 
-  // toggle dropdown menu open/close
-  var toClose = false;
-
-  function toggle(e) {
-    e.stopPropagation();
-    if (filename.innerText[filename.innerText.length - 1] == "*") {
-      alert("Save your file or refresh the page to clear all changes");
-      // alert('You have not saved your file. Autosaving...');
-      // document.querySelector("#my-form").submit();
-    } else {
-      var btn = this;
-      var menu = btn.nextSibling;
-
-      while (menu && menu.nodeType != 1) {
-        menu = menu.nextSibling;
-      }
-      if (!menu) return;
-
-      if (menu.style.display !== "block") {
-        menu.style.display = "block";
-        if (toClose) toClose.style.display = "none";
-
-        toClose = menu;
-      } else {
-        menu.style.display = "none";
-        toClose = false;
-      }
+    function change_active(btn) {
+        if (window.location.search != "") 
+            return;
+        
+        if (btn.matches(".active")) {
+            btn.setAttribute("class", "btn");
+            category.value = "";
+        } else {
+            btn.setAttribute("class", " btn active");
+            for (other_button of buttons) {
+                if (other_button != btn) {
+                    other_button.setAttribute("class", "btn");
+                }
+            }
+            category.value = btn.innerText;
+        }
     }
-  }
-  function closeAll() {
-    toClose.style.display = "none";
-  }
 
-  window.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".btn-buy-list").forEach(function (btn) {
-      btn.addEventListener("click", toggle, true);
+    function show_children(element) {
+        if (!element.firstElementChild.nextElementSibling.firstElementChild) return;
+        element.firstElementChild.nextElementSibling.style.display = "block";
+        element.firstElementChild.nextElementSibling.style.marginLeft = "150px";
+        element.firstElementChild.nextElementSibling.style.marginTop = "-30px";
+    }
+
+    function hide_children(element) {
+        element.firstElementChild.nextElementSibling.style.display = "none";
+        element.firstElementChild.nextElementSibling.style.marginLeft = "";
+    }
+
+    new_btn.addEventListener("click", function (event) {
+        if (filename.innerText[filename.innerText.length - 1] == "*") {
+            event.preventDefault();
+            alert("Save your file or refresh the page to clear all changes");
+            // alert('You have not saved your file. Autosaving...');
+            // document.querySelector("#my-form").submit();
+        }
     });
-  });
+    text_area.focus();
+    text_area.setSelectionRange(text_area.value.length, text_area.value.length);
+    text_area.scrollTop = text_area.scrollHeight;
 
-  window.onclick = function (event) {
-    if (toClose) {
-      closeAll.call(event.target);
-    }
-  };
+    form.addEventListener("input", (e) => {
+        if (filename != "Untitled.txt") {
+            filename.innerText += "*";
+        }
+    }, {once: true});
 
-  document.addEventListener("keydown", function (event) {
-    if (event.ctrlKey && event.key === "s") {
-      // alert('saved!');
-      event.preventDefault();
-      document.querySelector("#my-form").submit();
+    filename.addEventListener("dblclick", function (e) {
+        filename.style.display = "none";
+        filename_input.setAttribute("type", "text");
+        let str = filename.innerText;
+        if (str.endsWith("*")) {
+            filename_input.value = str.slice(0, -1);
+            isSaved = false;
+        } else 
+            filename_input.value = str;
+         filename_input.focus();
+    });
+
+    window.addEventListener("click", function () {
+        if (filename.style.display == "none") {
+            filename.style.display = "block";
+
+            if (! isSaved) 
+                filename.innerText = filename_input.value + "*";
+             else 
+                filename.innerText = filename_input.value;
+             filename_input.setAttribute("type", "hidden");
+            document.querySelector("textarea").focus();
+            hidden_filename.value = filename_input.value;
+        }
+    });
+
+    filename_input.addEventListener("click", function (e) {
+        e.stopPropagation();
+    });
+
+    function handle_enter(event) {
+        if (event.keyCode == 13) {
+            if (filename.style.display == "none") {
+                filename.style.display = "block";
+                filename.innerText = filename_input.value;
+                filename_input.setAttribute("type", "hidden");
+                hidden_filename.value = filename_input.value;
+            }
+        }
     }
-  });
+
+    function submit_form(e) {
+        e.preventDefault();
+        if (window.location.search === "") {
+            if ((hidden_filename.value == "") | (hidden_filename.value == "Untitled.txt")) {
+                alert("Name your file!");
+            } else if (category.value == "") {
+                alert("Select a category");
+            } else {
+                if (filename.style.display == "none") {
+                    filename.style.display = "block";
+                    filename.innerText = filename_input.value;
+                    filename_input.setAttribute("type", "hidden");
+                    document.querySelector("textarea").focus();
+                    hidden_filename.value = filename.innerText;
+                }
+                document.querySelector("#my-form").submit();
+            }
+        } else {
+            if (filename.style.display == "none") {
+                filename.style.display = "block";
+                filename.innerText = filename_input.value;
+                filename_input.setAttribute("type", "hidden");
+                document.querySelector("textarea").focus();
+                hidden_filename.value = filename.innerText;
+            }
+            document.querySelector("#my-form").submit();
+        }
+    }
+
+    // toggle dropdown menu open/close
+    const menu = document.querySelector("#open-btn").nextElementSibling;
+
+    function toggle(e) {
+        e.stopPropagation();
+        if (filename.innerText[filename.innerText.length - 1] == "*") {
+            alert("Save your file or refresh the page to clear all changes");
+            // alert('You have not saved your file. Autosaving...');
+            // document.querySelector("#my-form").submit();
+        } else {
+            if (menu.style.display == 'none') 
+                menu.style.display = 'block'
+             else if (menu.style.display == 'block') 
+                menu.style.display = 'none'
+            
+        }
+    }
+    function closeAll() {
+        menu.style.display = "none";
+    }
+
+    window.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".btn-buy-list").forEach(function (btn) {
+            btn.addEventListener("click", toggle, true);
+        });
+    });
+
+    window.onclick = function (event) {
+        closeAll();
+    };
+
+    document.addEventListener("keydown", function (event) {
+        if (event.ctrlKey && event.key === "s") { // alert('saved!');
+            event.preventDefault();
+            document.querySelector("#my-form").submit();
+        }
+    });
 </script>
+

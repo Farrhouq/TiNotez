@@ -11,19 +11,17 @@ CATEGORIES = [d.name for d in FileCategory.objects.all()]
 ROOT_DIR = f"C:\\Users\\{USER}\\Documents\\Notes"
 if platform.system() == "Linux":
     ROOT_DIR = f"/home/{USER}/Documents/Notes"
-directories = [os.fsencode(f"{ROOT_DIR}/{d.name}")
-               for d in FileCategory.objects.all()]
+directories = [os.fsencode(f"{ROOT_DIR}/{d.name}") for d in FileCategory.objects.all()]
 
 
 def get_files():
     """Getting files in directories and making sure they are up to date"""
     global folder1_file_list, folder2_file_list, folder3_file_list, file_list_list, directories
+    
     folder1_file_list, folder2_file_list, folder3_file_list = [], [], []
-    file_list_list = [folder1_file_list,
-                      folder2_file_list, folder3_file_list]
+    file_list_list = [folder1_file_list, folder2_file_list, folder3_file_list]
+    directories = [os.fsencode(f"{ROOT_DIR}/{d.name}") for d in FileCategory.objects.all()]
 
-    directories = [os.fsencode(f"{ROOT_DIR}/{d.name}")
-                   for d in FileCategory.objects.all()]
     for directory in directories:
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
@@ -31,21 +29,19 @@ def get_files():
                 file_list_list[directories.index(directory)].append(filename)
 
 
+# Create your views here.
 def setup(request):
     try:
         get_files()
         return redirect('home')
     except:
         pass
-
     if request.method == "POST":
         data = request.POST
         folder1, folder2, folder3 = data.get(
             "folder1"), data.get("folder2"), data.get("folder3")
-
         # clear the database for FileCategories
         FileCategory.objects.all().delete()
-
         # create the folders using the names
         for name in [folder1, folder2, folder3]:
             if name:
@@ -56,16 +52,11 @@ def setup(request):
     return render(request, "setup.html", {})
 
 
-
-# Create your views here.
-
-
 def home(request):
     try:
         get_files()
     except:
         return redirect('setup')
-
     open_file = request.GET.get("file")
     context = {}
     notes = []
@@ -76,19 +67,17 @@ def home(request):
             try:
                 with open(f"{ROOT_DIR}/{category}/{open_file}", "r") as file_opened:
                     notes = file_opened.readlines()
-                    context.update({"notes": notes, "file_category": f"{category.upper()}"})
+                    context.update(
+                        {"notes": notes, "file_category": f"{category.upper()}"})
                     break
             except FileNotFoundError:
                 print("Exception:", category)
                 print(CATEGORIES)
                 if CATEGORIES.index(category) == len(CATEGORIES)-1:
                     return redirect("home")
-
     files = dict(zip([category.name.upper() for category in FileCategory.objects.all()], [
                  folder1_file_list, folder2_file_list, folder3_file_list]))
-    context.update({"open_file": open_file, "folder1_file_list": folder1_file_list,
-                    "folder2_file_list": folder2_file_list,
-                    "folder3_file_list": folder3_file_list, "files": files})
+    context.update({"open_file": open_file, "files": files})
     return render(request, "home.html", context)
 
 
