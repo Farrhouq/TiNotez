@@ -11,8 +11,7 @@ CATEGORIES = [d.name for d in FileCategory.objects.all()]
 ROOT_DIR = f"C:\\Users\\{USER}\\Documents\\Notes"
 if platform.system() == "Linux":
     ROOT_DIR = f"/home/{USER}/Documents/Notes"
-directories = [os.fsencode(f"{ROOT_DIR}/{d.name}")
-               for d in FileCategory.objects.all()]
+directories = [os.fsencode(f"{ROOT_DIR}/{d.name}") for d in FileCategory.objects.all()]
 
 
 def get_files():
@@ -144,8 +143,7 @@ def edit_categories(request):
                     )
                     cat.name = folder_names[i]
                     cat.save()
-            CATEGORIES = [d.name for d in FileCategory.objects.all()]
-            
+            CATEGORIES = [d.name for d in FileCategory.objects.all()]  
         return redirect("home")
 
     context = {
