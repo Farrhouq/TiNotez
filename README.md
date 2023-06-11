@@ -1,6 +1,6 @@
 # TiNotez - Organize and Find Your Text Files Easily
 
-My Notes is a Django application designed to simplify the organization and retrieval of your text files. It provides a user-friendly interface for creating, editing, and managing your notes while offering unique features to enhance your productivity.
+Can't remember where you saved that text file? TiNotez is a Django application specialized to simplify the organization and retrieval of your text files. It provides a user-friendly interface for creating, editing, and managing your notes while offering unique features to enhance your productivity.
 
 ## Key Features
 
