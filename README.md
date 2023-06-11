@@ -21,15 +21,16 @@ My Notes is a Django application designed to simplify the organization and retri
 7. Start the development server: `python manage.py runserver`
 8. Open your web browser and visit: `http://localhost:8000`
 
-## Usage
+# Setup
+1. Set up folder categories for a maximum of three(3) folders.
+2. That's all you need to do. You will be redirected back to the editor once you submit the form.
 
-1. Create an account or log in to your existing account.
-2. Create a new note by clicking the "New Note" button.
-3. Give your note a title, add content, and assign relevant tags.
-4. Save the note, and it will be automatically organized for you.
-5. Utilize the search functionality to find specific notes using titles, content, or tags.
-6. Collaborate with others by sharing note links or inviting users to contribute.
-7. Take advantage of version control to track changes and revert to previous versions if needed.
+# Tips for using editor
+1. Double-click on the category folder names to edit them
+2. Press Ctrl+S to save
+3. Double-click on the filename at the top-left to edit it
+4. Press Enter or click anywhere else after editing filename
+
 
 ## Contributing
 
