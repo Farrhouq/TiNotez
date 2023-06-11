@@ -1,6 +1,7 @@
 # TiNotez - Organize and Find Your Text Files Easily
 
-Can't remember where you saved that text file? TiNotez is a Django application specialized to simplify the organization and retrieval of your text files. It provides a user-friendly interface for creating, editing, and managing your notes while offering unique features to enhance your productivity.
+Can't remember where you saved that text file? TiNotez is a Django application specialized to simplify the organization and retrieval of your text files. It provides a user-friendly interface for creating, editing, and managing your 
+while offering unique features to enhance your productivity.
 
 ## Key Features
 
@@ -10,8 +11,8 @@ Can't remember where you saved that text file? TiNotez is a Django application s
 
 ## Installation
 
-1. Clone the repository: `git clone https://github.com/Farrhouq/my-notes.git`
-2. Change into the project directory: `cd my-notes`
+1. Clone the repository: `git clone https://github.com/Farrhouq/TiNotez.git`
+2. Change into the project directory: `cd TiNotez`
 3. Create a virtual environment: `python -m venv myenv`
 4. Activate the virtual environment:
    - For Windows: `myenv\Scripts\activate`
