@@ -7,11 +7,9 @@ from .models import FileCategory
 
 
 USER = getpass.getuser()
-CATEGORIES = [d.name for d in FileCategory.objects.all()]
 ROOT_DIR = f"C:\\Users\\{USER}\\Documents\\Notes"
 if platform.system() == "Linux":
     ROOT_DIR = f"/home/{USER}/Documents/Notes"
-directories = [os.fsencode(f"{ROOT_DIR}/{d.name.upper()}") for d in FileCategory.objects.all()]
 
 
 def get_files():
@@ -23,8 +21,8 @@ def get_files():
 
     folder1_file_list, folder2_file_list, folder3_file_list = [], [], []
     file_list_list = [folder1_file_list, folder2_file_list, folder3_file_list]
-    directories = [os.fsencode(f"{ROOT_DIR}/{d.name.upper()}")
-                   for d in FileCategory.objects.all()]
+    directories = [os.fsencode(f"{ROOT_DIR}/{d.name.upper()}") for d in FileCategory.objects.all()]
+    CATEGORIES = [d.name for d in FileCategory.objects.all()]
 
     for directory in directories:
         for file in os.listdir(directory):
@@ -54,7 +52,7 @@ def setup(request):
         for name in [folder1, folder2, folder3]:
             if name:
                 FileCategory.objects.create(name=name)
-                os.makedirs(f"{ROOT_DIR}/{name.upper()}")
+                os.makedirs(f"{ROOT_DIR}/{name.upper()}", exist_ok=True)
                 print("make the dirs is completed")
         get_files()
         return redirect('home')
@@ -131,7 +129,7 @@ def edit_categories(request):
                 if folder_names[i] == "":
                     continue
                 FileCategory.objects.create(name=folder_names[i])
-                os.makedirs(f"{ROOT_DIR}/{folder_names[i].upper()}")
+                os.makedirs(f"{ROOT_DIR}/{folder_names[i].upper()}", exist_ok=True)
             else:
                 if folder_names[i] == "":
                     # os.remove(f"{ROOT_DIR}/{CATEGORIES[i]}/") -> I wanted to delete it... but no. I don't have time to code a confirmation to delete them.
