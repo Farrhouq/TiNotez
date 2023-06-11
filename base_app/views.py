@@ -11,7 +11,7 @@ CATEGORIES = [d.name for d in FileCategory.objects.all()]
 ROOT_DIR = f"C:\\Users\\{USER}\\Documents\\Notes"
 if platform.system() == "Linux":
     ROOT_DIR = f"/home/{USER}/Documents/Notes"
-directories = [os.fsencode(f"{ROOT_DIR}/{d.name}") for d in FileCategory.objects.all()]
+directories = [os.fsencode(f"{ROOT_DIR}/{d.name.upper()}") for d in FileCategory.objects.all()]
 
 
 def get_files():
@@ -23,7 +23,7 @@ def get_files():
 
     folder1_file_list, folder2_file_list, folder3_file_list = [], [], []
     file_list_list = [folder1_file_list, folder2_file_list, folder3_file_list]
-    directories = [os.fsencode(f"{ROOT_DIR}/{d.name}")
+    directories = [os.fsencode(f"{ROOT_DIR}/{d.name.upper()}")
                    for d in FileCategory.objects.all()]
 
     for directory in directories:
@@ -55,6 +55,7 @@ def setup(request):
             if name:
                 FileCategory.objects.create(name=name)
                 os.makedirs(f"{ROOT_DIR}/{name.upper()}")
+                print("make the dirs is completed")
         get_files()
         return redirect('home')
     return render(request, "edit-fc.html", {"page":page})
@@ -73,7 +74,7 @@ def home(request):
         CATEGORIES = [d.name for d in FileCategory.objects.all()]
         for category in CATEGORIES:
             try:
-                with open(f"{ROOT_DIR}/{category}/{open_file}", "r") as file_opened:
+                with open(f"{ROOT_DIR}/{category.upper()}/{open_file}", "r") as file_opened:
                     notes = file_opened.readlines()
                     context.update(
                         {"notes": notes, "file_category": f"{category.upper()}"})
@@ -100,8 +101,8 @@ def save(request):
             for file_list in file_list_list:
                 if original_filename in file_list:
                     os.rename(
-                        f"{ROOT_DIR}/{CATEGORIES[file_list_list.index(file_list)]}/{original_filename}",
-                        f"{ROOT_DIR}/{CATEGORIES[file_list_list.index(file_list)]}/{filename}",
+                        f"{ROOT_DIR}/{CATEGORIES[file_list_list.index(file_list)].upper()}/{original_filename}",
+                        f"{ROOT_DIR}/{CATEGORIES[file_list_list.index(file_list)].upper()}/{filename}",
                     )
 
         # If category is not None, then that means we're in a certain file or we're creating some file
@@ -138,8 +139,8 @@ def edit_categories(request):
                 if folder_names[i] != CATEGORIES[i]:
                     cat = categories[i]
                     os.rename(
-                        f"{ROOT_DIR}/{CATEGORIES[i]}/",
-                        f"{ROOT_DIR}/{folder_names[i]}/",
+                        f"{ROOT_DIR}/{CATEGORIES[i].upper()}/",
+                        f"{ROOT_DIR}/{folder_names[i].upper()}/",
                     )
                     cat.name = folder_names[i]
                     cat.save()
