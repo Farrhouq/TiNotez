@@ -14,7 +14,7 @@ if platform.system() == "Linux":
 
 def get_files():
     """Getting files in directories and making sure they are up to date"""
-    global folder1_file_list, folder2_file_list, folder3_file_list, file_list_list, directories
+    global folder1_file_list, folder2_file_list, folder3_file_list, file_list_list, directories, CATEGORIES
 
     if not FileCategory.objects.all().count():
         raise Exception("No categories set up")
